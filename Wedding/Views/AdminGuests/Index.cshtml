@@ -1,0 +1,151 @@
+﻿@{
+    Layout = "_Layout";
+}
+@using Wedding.Models
+@model IEnumerable<Guest>
+
+<div class="container mt-4">
+
+    <div class="d-flex align-items-center justify-content-between mb-3">
+        <h2 class="mb-0">Управление гостями</h2>
+
+    </div>
+
+    <div class="row g-3">
+        <!-- Форма добавления -->
+        <div class="col-lg-5">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Добавить гостя</h5>
+
+                    <div class="mb-3">
+                        <label for="nameGuest" class="form-label visually-hidden">Имя</label>
+                        <input id="nameGuest" class="form-control" placeholder="Имя" aria-label="Имя гостя" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="cityGuest" class="form-label visually-hidden">Город</label>
+                        <input id="cityGuest" class="form-control" placeholder="Город" list="cityList" aria-label="Город гостя" />
+                        <datalist id="cityList"></datalist>
+                    </div>
+
+                    <div class="row g-2 mb-2">
+                        <div class="col-6">
+                            <div class="form-check">
+                                <input id="youngGuest" type="checkbox" class="form-check-input" />
+                                <label class="form-check-label" for="youngGuest">Молодёжь</label>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-check">
+                                <input id="couple" type="checkbox" class="form-check-input" />
+                                <label class="form-check-label" for="couple">Пара</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-2">
+                        <label class="form-label fw-bold">Сторона</label>
+                        <div class="d-flex gap-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="side" id="sideHusband" value="husband">
+                                <label class="form-check-label" for="sideHusband">Со стороны мужа</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="side" id="sideWife" value="wife">
+                                <label class="form-check-label" for="sideWife">Со стороны жены</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Тип гостя</label>
+                        <div class="d-flex gap-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="relation" id="relRelative" value="relative">
+                                <label class="form-check-label" for="relRelative">Родственник</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="relation" id="relFriend" value="friend">
+                                <label class="form-check-label" for="relFriend">Друг</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-primary" type="button" onclick="addGuest()">Добавить</button>
+                        <button class="btn btn-outline-secondary" type="button" onclick="clearForm()">Очистить</button>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+
+        <!-- Статистика и список -->
+        <div class="col-lg-7">
+            <div class="card shadow-sm mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Статистика</h5>
+                    <div id="stats" class="small"></div>
+                </div>
+            </div>
+            <!-- Легенда -->
+            <div class="card mt-3 shadow-sm">
+                <div class="card-body">
+                    <h6 class="card-title">Легенда</h6>
+                    <div id="legend" class="d-flex flex-wrap gap-3 align-items-center"></div>
+                </div>
+            </div>
+            <div>
+                <input id="search" class="form-control form-control-sm" style="min-width:260px;" placeholder="Поиск: имя, город или email" aria-label="Поиск гостей" />
+            </div>
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Список гостей</h5>
+
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th scope="col">Имя</th>
+                                    <th scope="col">Город</th>
+                                    <th scope="col" class="text-center">Пара</th>
+                                    <th scope="col" class="text-center">Подтверждение</th>
+                                    <th scope="col" class="text-end" style="width:150px;">Действия</th>
+                                </tr>
+                            </thead>
+                            <tbody id="guestList">
+                                @* Заполняется JS *@
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Toasts holder (для уведомлений) -->
+<div id="guestsToastHolder" aria-live="polite" aria-atomic="true" class="position-fixed top-0 end-0 p-3" style="z-index:1080;"></div>
+
+<style>
+    /* Небольшие стили для легенды и свотчей */
+    .legend-swatch {
+        width: 28px;
+        height: 18px;
+        display: inline-block;
+        border-radius: 4px;
+        box-shadow: 0 0 0 1px rgba(0,0,0,0.06) inset;
+    }
+    /* Уменьшаем высоту кнопок в таблице для компактности */
+    table.table .btn-sm {
+        padding: .25rem .4rem;
+        font-size: .85rem;
+    }
+</style>
+
+@section Scripts {
+    <script src="~/js/guests.js"></script>
+}
