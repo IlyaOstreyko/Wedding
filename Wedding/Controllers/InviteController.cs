@@ -46,6 +46,7 @@ namespace Wedding.Controllers
                 GuestId = guest.Id,
                 GuestName = guest.Name,
                 GuestCity = guest.City,
+                IsConfirmed = guest.Confirmation,
                 IsCouple = guest.CoupleOrNot
             };
 
@@ -68,6 +69,36 @@ namespace Wedding.Controllers
             }
 
             return View(vm);
+        }
+
+        [HttpPost("ToggleAttendance")]
+        public async Task<IActionResult> ToggleAttendance(
+    [FromBody] ToggleAttendanceDto dto)
+        {
+            if (dto == null ||
+                string.IsNullOrWhiteSpace(dto.InviteToken))
+            {
+                return BadRequest();
+            }
+
+            var guest = (await _uow.Guests.GetAllAsync())
+                .FirstOrDefault(x => x.InviteToken == dto.InviteToken);
+
+            if (guest == null)
+            {
+                return NotFound();
+            }
+
+            guest.Confirmation = dto.IsConfirmed;
+
+            _uow.Guests.Update(guest);
+
+            await _uow.SaveAsync();
+
+            return Ok(new
+            {
+                success = true
+            });
         }
 
         // POST /Invite/Submit
@@ -119,9 +150,6 @@ namespace Wedding.Controllers
                     await _uow.SurveyAnswers.AddAsync(ans);
                 }
             }
-
-            // Можно пометить гостя как подтвердившего участие
-            guest.Confirmation = true;
             _uow.Guests.Update(guest);
 
             await _uow.SaveAsync();

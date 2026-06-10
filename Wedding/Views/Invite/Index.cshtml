@@ -1,156 +1,340 @@
 ﻿@model Wedding.ViewModel.InvitePageVm
 @{
-    Layout = "_Layout";
-    ViewData["HideHeader"] = true;
-    var weddingDate = new DateTime(2026, 8, 1, 15, 15, 00); // локальное время свадьбы (можете изменить время)
+    Layout = null; // Отключаем глобальный шаблон полностью
+
+    var weddingDate = new DateTime(2026, 8, 1, 15, 15, 0);
     var weddingDateIso = weddingDate.ToString("o");
 }
-<div class="frame-wrapper">
-    <div class="frame-bg" aria-hidden="true"></div>
 
-    <div class="frame-content">
-        <section class="invite-hero">
-            <div class="invite-hero-inner container">
-                <div class="container survey-section mt-1 mb-1">
-                    <div class="wedding-header text-center mb-4">
-                        <div class="wedding-subtitle">Свадебное приглашение</div>
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Приглашение на свадьбу Дарьи и Ильи</title>
 
-                        <h1 class="wedding-title">
-                            Дарья <span class="amp">&</span> Илья
-                        </h1>
+    <!-- Подключаем шрифты -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 
-                        <div class="wedding-line"></div>
-
-                        <div class="wedding-date-big">
-                            01 · 08 · 2026
-                        </div>
-                    </div>
-                    <div class="invite-card">
-                        <div class="invite-card-body">
-                            <h5 class="invite-title">Приглашение</h5>
-                            <p class="invite-text">
-                                Дорогие <span class="guest-name">@Model.GuestName</span>,
-                                приглашаем вас разделить с нами счастье нашего свадебного дня
-                            </p>
-                            <p class="invite-meta">
-                                <strong>Дата:</strong>1 августа 2026
-                                <br />
-                                <strong>В программе:</strong>
-                                <br />
-                                <strong>10:30</strong> — Церемония в ЗАГСе Центрального района (Минск, ул. М. Богдановича, 17а)
-                                <br />
-                                <strong>16:00</strong> — Банкет на усадьбе «Экзотика» (Бобруйский р-н, д. Спорное, 30)
-                            </p>
-                            <div class="small muted">Пожалуйста, заполните опрос ниже — это займёт пару минут.</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="container survey-section mt-1 mb-1">
-@*                     <h1 class="couple-names">Дарья &amp; Илья</h1>
-                    <p class="wedding-date">01.08.2026 — Торжество и праздник</p> *@
-
-                    <div id="countdown" class="countdown" data-target="@weddingDateIso" aria-live="polite">
-                        <div class="count-item"><span class="count-value" id="cd-days">00</span><span class="count-label">Дней</span></div>
-                        <div class="count-item"><span class="count-value" id="cd-hours">00</span><span class="count-label">Часов</span></div>
-                        <div class="count-item"><span class="count-value" id="cd-mins">00</span><span class="count-label">Минут</span></div>
-                        <div class="count-item"><span class="count-value" id="cd-secs">00</span><span class="count-label">Секунд</span></div>
-                    </div>
-
-                    <p class="hero-note">Мы будем рады видеть вас на нашем празднике. Пожалуйста, ответьте на несколько вопросов — это поможет нам сделать день ещё лучше.</p>
-
-@*                     <div class="hero-actions">
-                        <a href="#surveySection" class="btn btn-light btn-lg">Пройти опрос</a>
-                        <a href="mailto:" class="btn btn-outline-light btn-lg">Связаться с нами</a>
-                    </div> *@
-                </div>
-
-                
-            </div>
-        </section>
-
-        <section id="surveySection" class="container survey-section mt-1 mb-1">
-            <div class="survey-header text-center mb-4">
-                <h3 class="mb-1">Опрос приглашённого</h3>
-                <p class="text-muted">Ответы будут привязаны к вашему приглашению и помогут нам подготовиться</p>
-            </div>
-
-            <div class="row">
-                <div class="col-lg-8 mx-auto">
-                    <form id="inviteSurveyForm" onsubmit="return false;" class="survey-form">
-                        <input type="hidden" id="inviteToken" value="@Model.InviteToken" />
-
-                        <div id="questionsContainer" class="questions-container">
-                            @for (int i = 0; i < Model.Questions.Count; i++)
-                            {
-                                var q = Model.Questions[i];
-                                <div class="card question-card mb-3" data-index="@i" data-question-id="@q.QuestionId" data-instance="@q.InstanceIndex" role="group" aria-labelledby="qtitle_@i">
-                                    <div class="card-body">
-                                        <h6 id="qtitle_@i" class="card-title question-title">@q.Text</h6>
-
-                                        <div class="options">
-                                            @if (q.IsMultipleChoice)
-                                            {
-                                                foreach (var opt in q.Options)
-                                                {
-                                                    var inputId = $"opt_{i}_{opt.Id}";
-                                                    <div class="form-check">
-                                                        <input class="form-check-input option-checkbox" type="checkbox" id="@inputId" data-option-id="@opt.Id" />
-                                                        <label class="form-check-label" for="@inputId">@opt.Text</label>
-                                                    </div>
-                                                }
-                                            }
-                                            else
-                                            {
-                                                foreach (var opt in q.Options)
-                                                {
-                                                    var inputId = $"opt_{i}_{opt.Id}";
-                                                    <div class="form-check">
-                                                        <input class="form-check-input option-radio" type="radio" name="q_@i" id="@inputId" data-option-id="@opt.Id" />
-                                                        <label class="form-check-label" for="@inputId">@opt.Text</label>
-                                                    </div>
-                                                }
-                                            }
-                                        </div>
-
-                                        @if (q.AllowCustomAnswer)
-                                        {
-                                            <div class="mt-3">
-                                                <label class="form-label">Свой ответ</label>
-                                                <input type="text" class="form-control custom-answer" placeholder="Ваш ответ" />
-                                            </div>
-                                        }
-                                    </div>
-                                </div>
-                            }
-                        </div>
-
-                        <div class="d-flex justify-content-between align-items-center mt-4">
-                            <div class="text-muted small">
-                                Ваш город: <strong>@Model.GuestCity</strong> @if (Model.IsCouple)
-                                {
-                                    <span class="badge bg-secondary ms-2">Пара</span>
-                                }
-                            </div>
-                            <div>
-                                <button id="submitSurveyBtn" class="btn btn-primary btn-lg" type="button" onclick="submitSurvey()">Отправить ответы</button>
-                                <a href="~/" class="btn btn-outline-secondary btn-lg ms-2">Отмена</a>
-                            </div>
-                        </div>
-                    </form>
-
-                    <div id="inviteToastHolder" class="position-fixed top-0 end-0 p-3" style="z-index:1080;"></div>
-                </div>
-            </div>
-        </section>
-    </div>
-</div>
-
-
-@section Styles {
+    <!-- Подключаем ваши стили -->
     <link rel="stylesheet" href="~/css/invite.css" />
-}
+</head>
+<body>
 
-@section Scripts {
-    <script src="~/js/invite-survey.js" defer></script>
-    <script src="~/js/invite-countdown.js" defer></script>
-}
+    <section class="hero-section">
+        <div class="hero-overlay"></div>
+        <div class="hero-background"></div>
+        <div class="hero-content">
+            <div class="hero-subtitle fade-up">wedding day</div>
+            <h1 class="hero-title fade-up delay-1">Дарья <span>&</span> Илья</h1>
+            <div class="hero-date fade-up delay-2">1 августа 2026</div>
+            <a href="#invitation" class="hero-scroll fade-up delay-3">↓</a>
+        </div>
+    </section>
+
+    <section id="invitation" class="section editorial-section">
+        <div class="container-custom">
+            <div class="glass-card fade-up">
+                <div class="section-label">Приглашение</div>
+                <h2 class="editorial-title">Дорогие @Model.GuestName</h2>
+                <p class="editorial-text">Мы будем счастливы разделить с вами один из самых важных и трогательных дней нашей жизни.</p>
+                <p class="editorial-text">Приглашаем вас стать частью нашего свадебного торжества, наполненного любовью, теплом и счастливыми моментами.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ... ОСТАЛЬНЫЕ ВАШИ СЕКЦИИ (Timeline, Countdown, Survey, Final) ОСТАЮТСЯ БЕЗ ИЗМЕНЕНИЙ ... -->
+    <section class="section timeline-section">
+
+        <div class="container-custom">
+
+            <div class="section-heading fade-up">
+                План дня
+            </div>
+
+            <div class="timeline">
+
+                <div class="timeline-item fade-up">
+
+                    <div class="timeline-time">
+                        10:30
+                    </div>
+
+                    <div class="timeline-content">
+                        <h3>Церемония</h3>
+
+                        <p>
+                            ЗАГС Центрального района
+                        </p>
+
+                        <div class="timeline-location">
+                            Минск, ул. М. Богдановича, 17а
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="timeline-item fade-up delay-1">
+
+                    <div class="timeline-time">
+                        16:00
+                    </div>
+
+                    <div class="timeline-content">
+                        <h3>Банкет</h3>
+
+                        <p>
+                            Усадьба «Экзотика»
+                        </p>
+
+                        <div class="timeline-location">
+                            Бобруйский район, д. Спорное, 30
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <section class="section countdown-section">
+
+        <div class="container-custom text-center">
+
+            <div class="section-heading fade-up">
+                До свадьбы осталось
+            </div>
+
+            <div id="countdown"
+                 class="countdown fade-up delay-1"
+                 data-target="@weddingDateIso">
+
+                <div class="count-item">
+                    <div class="count-value" id="cd-days">00</div>
+                    <div class="count-label">дней</div>
+                </div>
+
+                <div class="count-item">
+                    <div class="count-value" id="cd-hours">00</div>
+                    <div class="count-label">часов</div>
+                </div>
+
+                <div class="count-item">
+                    <div class="count-value" id="cd-mins">00</div>
+                    <div class="count-label">минут</div>
+                </div>
+
+                <div class="count-item">
+                    <div class="count-value" id="cd-secs">00</div>
+                    <div class="count-label">секунд</div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <section class="section survey-section" id="surveySection">
+
+        <div class="container-custom">
+
+            <div class="survey-wrapper glass-card">
+
+                <div class="survey-header">
+
+                    <div class="section-label">
+                        RSVP
+                    </div>
+
+                    <h2 class="editorial-title">
+                        Подтверждение присутствия
+                    </h2>
+
+                    <p class="survey-description">
+                        Пожалуйста, ответьте на несколько вопросов.
+                        Это поможет нам лучше подготовить праздник.
+                    </p>
+
+                </div>
+
+                <form id="inviteSurveyForm"
+                      class="survey-form"
+                      onsubmit="return false;">
+
+                    <input type="hidden"
+                           id="inviteToken"
+                           value="@Model.InviteToken" />
+
+                    <div class="survey-progress">
+
+                        <div class="survey-progress-bar"
+                             id="surveyProgressBar"></div>
+
+                    </div>
+
+                    <div class="survey-steps">
+
+                        @for (int i = 0; i < Model.Questions.Count; i++)
+                        {
+                            var q = Model.Questions[i];
+
+                            <div class="survey-step @(i == 0 ? "active" : "")"
+                                 data-step="@i"
+                                 data-question-id="@q.QuestionId"
+                                 data-instance="@q.InstanceIndex">
+
+                                <div class="step-counter">
+                                    Вопрос @(i + 1) из @Model.Questions.Count
+                                </div>
+
+                                <h3 class="survey-question">
+                                    @q.Text
+                                </h3>
+
+                                <div class="survey-options">
+
+                                    @if (q.IsMultipleChoice)
+                                    {
+                                        foreach (var opt in q.Options)
+                                        {
+                                            var inputId = $"opt_{i}_{opt.Id}";
+
+                                            <label class="option-card">
+
+                                                <input type="checkbox"
+                                                       class="option-checkbox"
+                                                       id="@inputId"
+                                                       data-option-id="@opt.Id" />
+
+                                                <span class="custom-check"></span>
+
+                                                <span class="option-text">
+                                                    @opt.Text
+                                                </span>
+
+                                            </label>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        @foreach (var opt in q.Options)
+                                        {
+                                            var inputId = $"opt_q{q.QuestionId}_o{opt.Id}_i{q.InstanceIndex}";
+
+                                            <label class="option-card" for="@inputId">
+
+                                                <input type="checkbox"
+                                                       class="option-checkbox"
+                                                       id="@inputId"
+                                                       data-option-id="@opt.Id" />
+
+                                                <span class="custom-check"></span>
+
+                                                <span class="option-text">
+                                                    @opt.Text
+                                                </span>
+
+                                            </label>
+                                        }
+                                    }
+
+                                </div>
+
+                                @if (q.AllowCustomAnswer)
+                                {
+                                    <div class="custom-answer-block">
+
+                                        <label class="custom-answer-label" for="customAnswer_@i">
+                                            Ваш вариант
+                                        </label>
+
+                                        <input type="text"
+                                               id="customAnswer_@i"
+                                               class="custom-answer"
+                                               placeholder="Введите ваш ответ" />
+
+                                    </div>
+                                }
+
+                                <div class="survey-navigation">
+
+                                    @if (i > 0)
+                                    {
+                                        <button type="button"
+                                                class="btn-secondary"
+                                                onclick="prevStep()">
+                                            Назад
+                                        </button>
+                                    }
+
+                                    @if (i < Model.Questions.Count - 1)
+                                    {
+                                        <button type="button"
+                                                class="btn-primary-custom"
+                                                onclick="nextStep()">
+                                            Далее
+                                        </button>
+                                    }
+                                    else
+                                    {
+                                        <button type="button"
+                                                id="submitSurveyBtn"
+                                                class="btn-primary-custom"
+                                                onclick="submitSurvey()">
+                                            Отправить ответы
+                                        </button>
+                                    }
+
+                                </div>
+
+                            </div>
+                        }
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <section class="section final-section">
+
+        <div class="container-custom text-center">
+
+            <div class="final-content fade-up">
+
+                <div class="final-subtitle">
+                    Спасибо
+                </div>
+
+                <h2 class="final-title">
+                    Ждём вас
+                </h2>
+
+                <p class="final-text">
+                    С любовью,<br />
+                    Дарья & Илья
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <div id="inviteToastHolder" class="toast-holder"></div>
+
+    <!-- Подключаем скрипты перед закрывающим тегом body -->
+    <script src="~/js/invite-countdown.js"></script>
+    <script src="~/js/invite.js"></script>
+</body>
+</html>

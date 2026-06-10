@@ -1,0 +1,271 @@
+﻿/* wwwroot/css/invite.css */
+/* Frame background wrapper */
+.frame-wrapper {
+    position: relative;
+    min-height: 100vh;
+    overflow: hidden; /* скрываем фоновые артефакты */
+    background-color: var(--bg-soft); /* запасной фон под рамкой */
+}
+
+/* Фоновая рамка — фиксирована, занимает весь экран */
+.frame-bg {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background-repeat: no-repeat;
+    background-position: center top;
+    background-size: contain;
+    background-image: url('/frameDesktop.png');
+}
+
+/* мобильная рамка — заменяем изображение и подгоняем размер/позицию */
+@media (max-width: 767px) {
+    .frame-bg {
+        background-image: url('/frame.png');
+        background-position: center top;
+        background-size: cover; /* или contain — подберите визуально */
+    }
+}
+
+/* Контент, который прокручивается внутри рамки */
+.frame-content {
+    position: relative;
+    z-index: 1;
+    height: 100vh; /* важное: ограничиваем высоту видимой области */
+    overflow-y: auto; /* прокрутка содержимого */
+    -webkit-overflow-scrolling: touch;
+    box-sizing: border-box;
+    padding: 1vh 1vw; /* внутренние отступы — подгоните под "внутреннюю" область рамки */
+}
+
+/* Если рамка имеет прозрачную «внутреннюю» область, можно уменьшить padding на больших экранах */
+@media (min-width: 1200px) {
+    .frame-content {
+        padding: 1vh 1vw;
+    }
+}
+
+/* Мобильная оптимизация: уменьшить отступы, чтобы контент помещался */
+@media (max-width: 767px) {
+    .frame-bg {
+        background-position: center top;
+        background-size: cover;
+    }
+
+    .frame-content {
+        padding: 1vh 1vw;
+    }
+}
+/* Общая палитра и типографика */
+:root {
+    --gold: #d4af37;
+    --rose: #ff7ab6;
+    --soft: #fff7f2;
+    --ink: #1f1f1f;
+    --accent-1: #8b5cf6; /* фиолетовый */
+    --accent-2: #ff7ab6; /* розовый */
+    --accent-3: #ffd166; /* золотой */
+    --muted: #6c757d;
+    --bg-soft: #fffaf6;
+}
+
+.wedding-header {
+    margin-top: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.wedding-subtitle {
+    font-size: .9rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gold);
+}
+
+.wedding-title {
+    font-family: "Georgia", serif;
+    font-size: 3rem;
+    margin: .5rem 0;
+    color: #222;
+    letter-spacing: 1px;
+}
+
+    .wedding-title .amp {
+        color: var(--rose);
+        font-style: italic;
+        margin: 0 10px;
+    }
+
+.wedding-line {
+    width: 120px;
+    height: 2px;
+    margin: .5rem auto;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+
+.wedding-date-big {
+    font-size: 1.2rem;
+    letter-spacing: 6px;
+    color: var(--ink);
+}
+
+body {
+    background: linear-gradient(180deg, #fff 0%, #fffaf6 100%);
+    color: #222;
+}
+
+.invite-hero {
+    padding: 1rem 0;
+    background: none;
+}
+
+.invite-hero-inner {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.couple-names {
+    font-family: "Georgia", serif;
+    font-size: 3rem;
+    margin: 0;
+    color: var(--accent-1);
+    letter-spacing: 0.6px;
+}
+
+.wedding-date {
+    margin-top: .1rem;
+    color: var(--muted);
+    font-weight: 600;
+}
+
+.hero-note {
+    margin-top: 1.25rem;
+    color: #444;
+    max-width: 48rem;
+}
+
+.invite-card {
+    background: linear-gradient(145deg, #ffffff, var(--soft));
+    border-radius: 18px;
+    padding: 1.5rem;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.08);
+    border: 1px solid rgba(212,175,55,0.15);
+}
+
+.invite-title {
+    font-size: 1.4rem;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--gold);
+}
+
+.invite-meta {
+    margin-bottom: 0.25rem;
+    color: #333;
+}
+
+.hero-actions .btn {
+    margin-right: .1rem;
+}
+
+/* Countdown */
+.countdown {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+    align-items: center;
+}
+
+.count-item {
+    background: linear-gradient(145deg, #fff, #fff7f2);
+    border: 1px solid rgba(212,175,55,0.2);
+    border-radius: 14px;
+    padding: .5rem .75rem;
+    min-width: 80px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.06);
+}
+
+.count-value {
+    font-size: 1.6rem;
+    color: var(--gold);
+}
+
+.count-label {
+    display: block;
+    font-size: .75rem;
+    color: var(--muted);
+    margin-top: .15rem;
+}
+
+/* Survey */
+.survey-section {
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+}
+
+.question-card {
+    border-radius: 10px;
+    border: 1px solid rgba(16,24,40,0.04);
+}
+
+.question-title {
+    font-weight: 600;
+    color: #222;
+}
+
+.options .form-check {
+    margin-bottom: .5rem;
+}
+
+.options .form-check-label {
+    color: #333;
+}
+
+/* Buttons */
+.btn-primary {
+    background: linear-gradient(90deg,var(--accent-1),var(--accent-2));
+    border: none;
+    box-shadow: 0 6px 18px rgba(139,92,246,0.18);
+}
+
+.btn-outline-secondary {
+    border-color: rgba(16,24,40,0.06);
+    color: #333;
+}
+
+/* Small tweaks */
+.invite-hero .hero-right .invite-card {
+    max-width: 360px;
+    margin-left: auto;
+}
+
+.guest-name {
+    font-family: "Georgia", serif;
+    text-transform: uppercase;
+    font-size: 1.2rem;
+    letter-spacing: 2px;
+    color: var(--gold);
+    font-weight: 700;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .invite-hero-inner {
+        flex-direction: column;
+    }
+
+    .hero-right {
+        order: -1;
+        width: 100%;
+        margin-bottom: 1rem;
+    }
+
+    .couple-names {
+        font-size: 2.2rem;
+        text-align: center;
+    }
+}
