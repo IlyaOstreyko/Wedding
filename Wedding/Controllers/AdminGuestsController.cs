@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Wedding.Models;
+using Wedding.Security;
 using Wedding.UnitOfWork;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Wedding.Controllers
 {
@@ -15,8 +17,16 @@ namespace Wedding.Controllers
 
         public async Task<IActionResult> Index()
         {
+            if (!AdminAuthHelper.IsAuthorized(HttpContext))
+                return RedirectToAction("Locked");
+
             var guests = await _uow.Guests.GetAllAsync();
             return View(guests);
+        }
+
+        public IActionResult Locked()
+        {
+            return View("~/Views/Shared/Locked.cshtml");
         }
 
         [HttpPost]
@@ -24,6 +34,8 @@ namespace Wedding.Controllers
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
+            if (!guest.CoupleOrNot && guest.Gender == null)
+                return BadRequest("Не выбран пол гостя");
 
             await _uow.Guests.AddAsync(guest);
             await _uow.SaveAsync();
@@ -31,7 +43,7 @@ namespace Wedding.Controllers
             return Ok(guest);
         }
 
-        [HttpDelete]
+        [HttpPost]
         public async Task<IActionResult> DeleteGuest(int id)
         {
             var guest = await _uow.Guests.GetByIdAsync(id);
@@ -44,7 +56,7 @@ namespace Wedding.Controllers
             return Ok();
         }
 
-        [HttpPut]
+        [HttpPost]
         public async Task<IActionResult> UpdateGuest([FromBody] Guest guest)
         {
             var existing = await _uow.Guests.GetByIdAsync(guest.Id);
@@ -56,6 +68,12 @@ namespace Wedding.Controllers
             //existing.Email = guest.Email;
             existing.CoupleOrNot = guest.CoupleOrNot;
             existing.YoungOrNot = guest.YoungOrNot;
+
+            existing.Gender = guest.Gender;
+            existing.HusbandGuestOrNot = guest.HusbandGuestOrNot;
+            existing.WifeGuestOrNot = guest.WifeGuestOrNot;
+            existing.RelativeOrNot = guest.RelativeOrNot;
+            existing.FriendOrNot = guest.FriendOrNot;
 
             _uow.Guests.Update(existing);
             await _uow.SaveAsync();

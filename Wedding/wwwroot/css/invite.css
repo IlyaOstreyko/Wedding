@@ -372,6 +372,14 @@ body {
    SURVEY
    ========================================================= */
 
+.survey-note {
+    margin-top: 8px;
+    font-size: 0.85rem;
+    color: rgba(255,255,255,0.7); /* подстройте под вашу палитру */
+    text-align: center;
+    font-style: italic;
+}
+
 .survey-wrapper {
     max-width: 900px;
     margin-inline: auto;

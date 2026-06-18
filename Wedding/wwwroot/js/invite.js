@@ -130,8 +130,6 @@
 
         updateProgress();
 
-        scrollToSurveyTop();
-
     }
 
     function updateProgress() {

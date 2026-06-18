@@ -6,5 +6,6 @@ namespace Wedding.Interfaces
     {
         Task<Guest?> GetWithAnswersAsync(int id);
         Task<Guest?> GetByTokenAsync(string token);
+        Task<List<Guest>> GetAllWithAnswersAsync();
     }
 }

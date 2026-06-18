@@ -16,7 +16,6 @@ namespace Wedding.Data
         {
         }
 
-        // Если нужно — можно оставить Fluent API
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

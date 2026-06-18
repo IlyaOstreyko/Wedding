@@ -10,6 +10,13 @@ namespace Wedding.Repositories
     {
         public QuestionOptionRepository(AppDbContext context) : base(context) { }
 
+        public async Task<List<SurveyQuestion>> GetAllWithOptionsAsync()
+        {
+            return await _context.SurveyQuestions
+                .Include(q => q.Options)
+                .ToListAsync();
+        }
+
         public async Task<IEnumerable<QuestionOption>> GetByQuestionIdAsync(int questionId)
         {
             return await _dbSet

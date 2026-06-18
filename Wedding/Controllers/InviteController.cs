@@ -16,57 +16,54 @@ namespace Wedding.Controllers
             _uow = uow;
         }
 
-        // GET /Invite/{token}
         [HttpGet("{token}")]
         public async Task<IActionResult> Index(string token)
         {
-            if (string.IsNullOrWhiteSpace(token)) return NotFound();
+            if (string.IsNullOrWhiteSpace(token))
+                return NotFound();
 
-            // Загружаем гостя по токену
-            var guest = await _uow.Guests.GetAllAsync() // замените на метод поиска по токену, если есть
-                .ContinueWith(t => t.Result.FirstOrDefault(g => g.InviteToken == token));
+            var guest = (await _uow.Guests.GetAllAsync())
+                .FirstOrDefault(g => g.InviteToken == token);
 
-            if (guest == null) return NotFound();
+            if (guest == null)
+                return NotFound();
 
-            // Загружаем вопросы с опциями
             var questions = (await _uow.SurveyQuestions.GetAllWithOptionsAsync())
                 .OrderBy(q => q.Id)
                 .ToList();
 
-            // Фильтрация по OutOfTowners: показываем такие вопросы только если город == "Бобруйск"
-            bool includeOutOfTowners = string.Equals(guest.City?.Trim(), "Бобруйск", System.StringComparison.OrdinalIgnoreCase);
+            bool isBobruiskGuest =
+                string.Equals(guest.City?.Trim(), "Бобруйск", StringComparison.OrdinalIgnoreCase);
 
-            var filtered = questions
-                .Where(q => !q.OutOfTowners || includeOutOfTowners)
+            var filteredQuestions = questions
+                .Where(q => !(isBobruiskGuest && q.OutOfTowners))
                 .ToList();
 
+            // МАППИНГ в ViewModel
             var vm = new InvitePageVm
             {
                 InviteToken = token,
                 GuestId = guest.Id,
                 GuestName = guest.Name,
                 GuestCity = guest.City,
+                Gender = guest.Gender,
                 IsConfirmed = guest.Confirmation,
-                IsCouple = guest.CoupleOrNot
-            };
+                IsCouple = guest.CoupleOrNot,
 
-            foreach (var q in filtered)
-            {
-                // Если ForCouple и гость — пара, добавляем два экземпляра (InstanceIndex 1 и 2)
-                int instances = (q.ForCouple && guest.CoupleOrNot) ? 2 : 1;
-                for (int i = 1; i <= instances; i++)
+                Questions = filteredQuestions.Select(q => new InviteQuestionVm
                 {
-                    vm.Questions.Add(new InviteQuestionVm
+                    QuestionId = q.Id,
+                    Text = q.Text,
+                    IsMultipleChoice = q.IsMultipleChoice,
+                    AllowCustomAnswer = q.AllowCustomAnswer,
+
+                    Options = q.Options.Select(o => new OptionVm
                     {
-                        QuestionId = q.Id,
-                        Text = q.Text + (instances == 2 ? (i == 1 ? " (партнёр 1)" : " (партнёр 2)") : ""),
-                        IsMultipleChoice = q.IsMultipleChoice,
-                        AllowCustomAnswer = q.AllowCustomAnswer,
-                        InstanceIndex = i,
-                        Options = q.Options.Select(o => new OptionVm { Id = o.Id, Text = o.Text }).ToList()
-                    });
-                }
-            }
+                        Id = o.Id,
+                        Text = o.Text
+                    }).ToList()
+                }).ToList()
+            };
 
             return View(vm);
         }

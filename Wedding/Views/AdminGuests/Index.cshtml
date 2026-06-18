@@ -6,101 +6,40 @@
 
 <div class="container mt-4">
 
-    <div class="d-flex align-items-center justify-content-between mb-3">
-        <h2 class="mb-0">Управление гостями</h2>
+    <div class="row justify-content-center">
+        <div class="col-lg-12 col-12">
 
-    </div>
-
-    <div class="row g-3">
-        <!-- Форма добавления -->
-        <div class="col-lg-5">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title">Добавить гостя</h5>
-
-                    <div class="mb-3">
-                        <label for="nameGuest" class="form-label visually-hidden">Имя</label>
-                        <input id="nameGuest" class="form-control" placeholder="Имя" aria-label="Имя гостя" />
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="cityGuest" class="form-label visually-hidden">Город</label>
-                        <input id="cityGuest" class="form-control" placeholder="Город" list="cityList" aria-label="Город гостя" />
-                        <datalist id="cityList"></datalist>
-                    </div>
-
-                    <div class="row g-2 mb-2">
-                        <div class="col-6">
-                            <div class="form-check">
-                                <input id="youngGuest" type="checkbox" class="form-check-input" />
-                                <label class="form-check-label" for="youngGuest">Молодёжь</label>
-                            </div>
-                        </div>
-                        <div class="col-6">
-                            <div class="form-check">
-                                <input id="couple" type="checkbox" class="form-check-input" />
-                                <label class="form-check-label" for="couple">Пара</label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="mb-2">
-                        <label class="form-label fw-bold">Сторона</label>
-                        <div class="d-flex gap-3">
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="side" id="sideHusband" value="husband">
-                                <label class="form-check-label" for="sideHusband">Со стороны мужа</label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="side" id="sideWife" value="wife">
-                                <label class="form-check-label" for="sideWife">Со стороны жены</label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Тип гостя</label>
-                        <div class="d-flex gap-3">
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="relation" id="relRelative" value="relative">
-                                <label class="form-check-label" for="relRelative">Родственник</label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="relation" id="relFriend" value="friend">
-                                <label class="form-check-label" for="relFriend">Друг</label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="d-flex gap-2">
-                        <button class="btn btn-primary" type="button" onclick="addGuest()">Добавить</button>
-                        <button class="btn btn-outline-secondary" type="button" onclick="clearForm()">Очистить</button>
-                    </div>
-                </div>
+            <div class="d-flex align-items-center justify-content-between mb-3">
+                <h2 class="mb-0">Управление гостями</h2>
             </div>
 
+            <button class="btn btn-success mb-3 w-100" onclick="openAddGuestModal()">
+                <i class="bi bi-plus-lg"></i> Добавить гостя
+            </button>
 
-        </div>
-
-        <!-- Статистика и список -->
-        <div class="col-lg-7">
-            <div class="card shadow-sm mb-3">
+            <!-- СТАТИСТИКА -->
+            <div class="card shadow-sm mb-3 w-100">
                 <div class="card-body">
                     <h5 class="card-title">Статистика</h5>
                     <div id="stats" class="small"></div>
                 </div>
             </div>
-            <!-- Легенда -->
-            <div class="card mt-3 shadow-sm">
+
+            <!-- ЛЕГЕНДА -->
+            <div class="card shadow-sm mb-3 w-100">
                 <div class="card-body">
                     <h6 class="card-title">Легенда</h6>
                     <div id="legend" class="d-flex flex-wrap gap-3 align-items-center"></div>
                 </div>
             </div>
-            <div>
-                <input id="search" class="form-control form-control-sm" style="min-width:260px;" placeholder="Поиск: имя, город или email" aria-label="Поиск гостей" />
-            </div>
-            <div class="card shadow-sm">
+
+            <!-- ПОИСК -->
+            <input id="search"
+                   class="form-control form-control-sm mb-3 w-100"
+                   placeholder="Поиск: имя, город или email" />
+
+            <!-- ТАБЛИЦА -->
+            <div class="card shadow-sm w-100">
                 <div class="card-body">
                     <h5 class="card-title">Список гостей</h5>
 
@@ -108,21 +47,20 @@
                         <table class="table table-hover align-middle mb-0">
                             <thead class="table-light">
                                 <tr>
-                                    <th scope="col">Имя</th>
-                                    <th scope="col">Город</th>
-                                    <th scope="col" class="text-center">Пара</th>
-                                    <th scope="col" class="text-center">Подтверждение</th>
-                                    <th scope="col" class="text-end" style="width:150px;">Действия</th>
+                                    <th>Имя</th>
+                                    <th>Город</th>
+                                    <th class="text-center">Пара</th>
+                                    <th class="text-center">Подтверждение</th>
+                                    <th class="text-end" style="width:150px;">Действия</th>
                                 </tr>
                             </thead>
-                            <tbody id="guestList">
-                                @* Заполняется JS *@
-                            </tbody>
+                            <tbody id="guestList"></tbody>
                         </table>
                     </div>
 
                 </div>
             </div>
+
         </div>
     </div>
 </div>
@@ -145,7 +83,161 @@
         font-size: .85rem;
     }
 </style>
+<div class="modal fade" id="guestModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
 
+            <div class="modal-header">
+                <h5 class="modal-title" id="guestModalTitle">
+                    Добавить гостя
+                </h5>
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+
+                <input type="hidden" id="guestId" />
+
+                <div class="mb-3">
+                    <input id="nameGuest"
+                           class="form-control"
+                           placeholder="Имя">
+                </div>
+
+                <div class="mb-3">
+                    <input id="cityGuest"
+                           class="form-control"
+                           placeholder="Город"
+                           list="cityList">
+                </div>
+
+                <div class="row g-2 mb-3">
+                    <div class="col-6">
+                        <div class="form-check">
+                            <input id="youngGuest"
+                                   type="checkbox"
+                                   class="form-check-input">
+                            <label class="form-check-label">
+                                Молодёжь
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="col-6">
+                        <div class="form-check">
+                            <input id="couple"
+                                   type="checkbox"
+                                   class="form-check-input">
+                            <label class="form-check-label">
+                                Пара
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="genderBlock" class="mb-3">
+                    <label class="form-label fw-bold">Пол</label>
+
+                    <div class="d-flex gap-3">
+                        <div class="form-check">
+                            <input class="form-check-input"
+                                   type="radio"
+                                   name="gender"
+                                   id="genderMale"
+                                   value="Male">
+                            <label class="form-check-label">
+                                Мужской
+                            </label>
+                        </div>
+
+                        <div class="form-check">
+                            <input class="form-check-input"
+                                   type="radio"
+                                   name="gender"
+                                   id="genderFemale"
+                                   value="Female">
+                            <label class="form-check-label">
+                                Женский
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Сторона</label>
+
+                    <div class="d-flex gap-3">
+                        <div class="form-check">
+                            <input class="form-check-input"
+                                   type="radio"
+                                   name="side"
+                                   id="sideHusband"
+                                   value="husband">
+                            <label class="form-check-label">
+                                Со стороны мужа
+                            </label>
+                        </div>
+
+                        <div class="form-check">
+                            <input class="form-check-input"
+                                   type="radio"
+                                   name="side"
+                                   id="sideWife"
+                                   value="wife">
+                            <label class="form-check-label">
+                                Со стороны жены
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="form-label fw-bold">Тип гостя</label>
+
+                    <div class="d-flex gap-3">
+                        <div class="form-check">
+                            <input class="form-check-input"
+                                   type="radio"
+                                   name="relation"
+                                   id="relRelative"
+                                   value="relative">
+                            <label class="form-check-label">
+                                Родственник
+                            </label>
+                        </div>
+
+                        <div class="form-check">
+                            <input class="form-check-input"
+                                   type="radio"
+                                   name="relation"
+                                   id="relFriend"
+                                   value="friend">
+                            <label class="form-check-label">
+                                Друг
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-secondary"
+                        data-bs-dismiss="modal">
+                    Отмена
+                </button>
+
+                <button class="btn btn-primary"
+                        onclick="saveGuest()">
+                    Сохранить
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>
 @section Scripts {
     <script src="~/js/guests.js"></script>
 }

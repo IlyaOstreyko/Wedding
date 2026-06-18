@@ -2,6 +2,11 @@
 
 namespace Wedding.Models
 {
+    public enum Gender
+    {
+        Male,
+        Female
+    }
     public class Guest
     {
         public int Id { get; set; }
@@ -17,9 +22,7 @@ namespace Wedding.Models
         public bool RelativeOrNot { get; set; }
         public bool FriendOrNot { get; set; }
         public bool Confirmation { get; set; }
-        
-
-        //[EmailAddress]
+        public Gender? Gender { get; set; }
         public string? Email { get; set; }
 
         [Required]

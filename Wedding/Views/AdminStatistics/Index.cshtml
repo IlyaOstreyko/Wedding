@@ -1,0 +1,245 @@
+﻿@model Wedding.ViewModels.SurveyAnswersAdminVm
+
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Ответы гостей";
+}
+
+<div class="survey-admin">
+
+    <div class="page-header">
+        <h1>Ответы гостей</h1>
+
+        <input type="text"
+               id="guestSearch"
+               class="form-control"
+               placeholder="Поиск гостя..." />
+    </div>
+
+    <div class="guests-section">
+
+        <h2>Ответы гостей</h2>
+
+        @foreach (var guest in Model.Guests)
+        {
+            <div class="guest-card">
+
+                <div class="guest-header">
+
+                    <div>
+                        <div class="guest-name">
+                            @guest.GuestName
+                        </div>
+
+                        <div class="guest-meta">
+                            @guest.City
+                        </div>
+                    </div>
+
+                    <span class="confirm-badge @(guest.Confirmation ? "success" : "danger")">
+                        @(guest.Confirmation ? "Подтвержден" : "Не подтвержден")
+                    </span>
+
+                </div>
+
+                <div class="answers-list">
+
+                    @foreach (var answer in guest.Answers)
+                    {
+                        <div class="answer-row">
+
+                            <div class="question">
+                                @answer.Question
+                            </div>
+
+                            <div class="answer">
+                                @answer.Answer
+                            </div>
+
+                        </div>
+                    }
+
+                </div>
+
+            </div>
+        }
+
+    </div>
+
+    <div class="summary-section">
+
+        <h2>Сводка по вопросам</h2>
+
+        @foreach (var question in Model.Questions)
+        {
+            <div class="summary-card">
+
+                <h3>@question.Question</h3>
+
+                @if (question.Options.Any())
+                {
+                    <table class="table table-sm">
+
+                        <thead>
+                            <tr>
+                                <th>Вариант</th>
+                                <th>Ответов</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            @foreach (var option in question.Options)
+                            {
+                                <tr>
+                                    <td>@option.Option</td>
+                                    <td>@option.Count</td>
+                                </tr>
+                            }
+
+                        </tbody>
+
+                    </table>
+                }
+
+                @if (question.CustomAnswers.Any())
+                {
+                    <div class="custom-answers">
+
+                        <h5>Свободные ответы</h5>
+
+                        <ul>
+
+                            @foreach (var answer in question.CustomAnswers)
+                            {
+                                <li>@answer</li>
+                            }
+
+                        </ul>
+
+                    </div>
+                }
+
+            </div>
+        }
+
+    </div>
+
+</div>
+
+@section Scripts
+{
+    <script>
+        const search =
+            document.getElementById('guestSearch');
+
+        search.addEventListener('input', function () {
+
+            const value =
+                this.value.toLowerCase();
+
+            document
+                .querySelectorAll('.guest-card')
+                .forEach(card => {
+
+                    const text =
+                        card.innerText.toLowerCase();
+
+                    card.style.display =
+                        text.includes(value)
+                        ? ''
+                        : 'none';
+                });
+        });
+    </script>
+}
+
+<style>
+
+    .survey-admin {
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    .page-header {
+        margin-bottom: 30px;
+    }
+
+        .page-header h1 {
+            margin-bottom: 15px;
+        }
+
+    .guests-section {
+        margin-bottom: 60px;
+    }
+
+    .guest-card {
+        border: 1px solid #e5e5e5;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 20px;
+        background: #fff;
+    }
+
+    .guest-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .guest-name {
+        font-size: 20px;
+        font-weight: 600;
+    }
+
+    .guest-meta {
+        color: #777;
+    }
+
+    .confirm-badge {
+        padding: 6px 12px;
+        border-radius: 20px;
+        color: #fff;
+        font-size: 12px;
+    }
+
+        .confirm-badge.success {
+            background: #198754;
+        }
+
+        .confirm-badge.danger {
+            background: #dc3545;
+        }
+
+    .answer-row {
+        padding: 10px 0;
+        border-top: 1px solid #f1f1f1;
+    }
+
+    .question {
+        font-weight: 600;
+    }
+
+    .answer {
+        margin-top: 4px;
+        color: #666;
+    }
+
+    .summary-card {
+        border: 1px solid #e5e5e5;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 20px;
+        background: #fff;
+    }
+
+    .custom-answers {
+        margin-top: 20px;
+    }
+
+        .custom-answers ul {
+            margin: 0;
+        }
+
+</style>

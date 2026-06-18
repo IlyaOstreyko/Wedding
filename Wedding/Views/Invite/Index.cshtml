@@ -1,9 +1,18 @@
-﻿@model Wedding.ViewModel.InvitePageVm
+﻿@using Wedding.Models
+@model Wedding.ViewModel.InvitePageVm
 @{
     Layout = null; // Отключаем глобальный шаблон полностью
 
     var weddingDate = new DateTime(2026, 8, 1, 15, 15, 0);
     var weddingDateIso = weddingDate.ToString("o");
+    var greeting = Model.IsCouple
+    ? "Дорогие"
+    : Model.Gender == Gender.Male
+        ? "Дорогой"
+        : "Дорогая";
+    var attendanceText = Model.IsCouple
+? "Мы будем на свадьбе"
+: "Я буду на свадьбе";
 }
 
 <!DOCTYPE html>
@@ -11,7 +20,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Приглашение на свадьбу Дарьи и Ильи</title>
+    <title>Приглашение на свадьбу Ильи и Дарьи</title>
 
     <!-- Подключаем шрифты -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -20,15 +29,16 @@
 
     <!-- Подключаем ваши стили -->
     <link rel="stylesheet" href="~/css/invite.css" />
+    <link rel="icon" type="image/png" href="~/logo.png" />
 </head>
 <body>
 
     <section class="hero-section">
-        <div class="hero-overlay"></div>
-        <div class="hero-background"></div>
+        <div class="global-background"></div>
+        <div class="global-background-overlay"></div>
         <div class="hero-content">
             <div class="hero-subtitle fade-up">wedding day</div>
-            <h1 class="hero-title fade-up delay-1">Дарья <span>&</span> Илья</h1>
+            <h1 class="hero-title fade-up delay-1">Илья <span>&</span> Дарья</h1>
             <div class="hero-date fade-up delay-2">1 августа 2026</div>
             <a href="#invitation" class="hero-scroll fade-up delay-3">↓</a>
         </div>
@@ -38,14 +48,56 @@
         <div class="container-custom">
             <div class="glass-card fade-up">
                 <div class="section-label">Приглашение</div>
-                <h2 class="editorial-title">Дорогие @Model.GuestName</h2>
+                <h2 class="editorial-title">@greeting @Model.GuestName</h2>
                 <p class="editorial-text">Мы будем счастливы разделить с вами один из самых важных и трогательных дней нашей жизни.</p>
                 <p class="editorial-text">Приглашаем вас стать частью нашего свадебного торжества, наполненного любовью, теплом и счастливыми моментами.</p>
+                <p class="editorial-text">
+                    Будем признательны, если девушки воздержатся от нарядов преимущественно белого цвета. Пусть в этот вечер он будет только на невесте.
+                </p>
             </div>
         </div>
     </section>
 
     <!-- ... ОСТАЛЬНЫЕ ВАШИ СЕКЦИИ (Timeline, Countdown, Survey, Final) ОСТАЮТСЯ БЕЗ ИЗМЕНЕНИЙ ... -->
+    <section class="section attendance-section">
+
+        <div class="container-custom">
+
+            <div class="glass-card attendance-card fade-up">
+
+                <div class="section-label">
+                    Илья <span>&</span> Дарья
+                </div>
+
+                <h2 class="editorial-title">
+                    Подтверждение присутствия
+                </h2>
+
+                <p class="attendance-description">
+                    Вы можете в любой момент подтвердить или отменить своё присутствие.
+                    Изменение сохраняется автоматически и не зависит от заполнения анкеты.
+                </p>
+
+                <label class="attendance-toggle">
+
+                    <input type="checkbox"
+                           id="attendanceCheckbox"
+                    @(Model.IsConfirmed ? "checked" : "") />
+
+                    <span class="attendance-toggle-ui"></span>
+
+                    <span class="attendance-toggle-text">
+                        @attendanceText
+                    </span>
+
+                </label>
+
+            </div>
+
+        </div>
+
+    </section>
+
     <section class="section timeline-section">
 
         <div class="container-custom">
@@ -149,19 +201,22 @@
                 <div class="survey-header">
 
                     <div class="section-label">
-                        RSVP
+                        Илья <span>&</span> Дарья
                     </div>
-
-                    <h2 class="editorial-title">
-                        Подтверждение присутствия
-                    </h2>
 
                     <p class="survey-description">
                         Пожалуйста, ответьте на несколько вопросов.
                         Это поможет нам лучше подготовить праздник.
                     </p>
+                    @if (Model.IsCouple)
+                    {
+                        <p class="survey-note">
+                            Парам отвечать вместе и с одного устройства
+                        </p>
+                    }
 
                 </div>
+
 
                 <form id="inviteSurveyForm"
                       class="survey-form"
@@ -186,8 +241,7 @@
 
                             <div class="survey-step @(i == 0 ? "active" : "")"
                                  data-step="@i"
-                                 data-question-id="@q.QuestionId"
-                                 data-instance="@q.InstanceIndex">
+                                 data-question-id="@q.QuestionId">
 
                                 <div class="step-counter">
                                     Вопрос @(i + 1) из @Model.Questions.Count
@@ -199,49 +253,24 @@
 
                                 <div class="survey-options">
 
-                                    @if (q.IsMultipleChoice)
+                                    @foreach (var opt in q.Options)
                                     {
-                                        foreach (var opt in q.Options)
-                                        {
-                                            var inputId = $"opt_{i}_{opt.Id}";
+                                        var inputId = $"opt_{q.QuestionId}_{opt.Id}";
 
-                                            <label class="option-card">
+                                        <label class="option-card" for="@inputId">
 
-                                                <input type="checkbox"
-                                                       class="option-checkbox"
-                                                       id="@inputId"
-                                                       data-option-id="@opt.Id" />
+                                            <input type="checkbox"
+                                                   class="option-checkbox"
+                                                   id="@inputId"
+                                                   data-option-id="@opt.Id" />
 
-                                                <span class="custom-check"></span>
+                                            <span class="custom-check"></span>
 
-                                                <span class="option-text">
-                                                    @opt.Text
-                                                </span>
+                                            <span class="option-text">
+                                                @opt.Text
+                                            </span>
 
-                                            </label>
-                                        }
-                                    }
-                                    else
-                                    {
-                                        @foreach (var opt in q.Options)
-                                        {
-                                            var inputId = $"opt_q{q.QuestionId}_o{opt.Id}_i{q.InstanceIndex}";
-
-                                            <label class="option-card" for="@inputId">
-
-                                                <input type="checkbox"
-                                                       class="option-checkbox"
-                                                       id="@inputId"
-                                                       data-option-id="@opt.Id" />
-
-                                                <span class="custom-check"></span>
-
-                                                <span class="option-text">
-                                                    @opt.Text
-                                                </span>
-
-                                            </label>
-                                        }
+                                        </label>
                                     }
 
                                 </div>
@@ -322,7 +351,7 @@
 
                 <p class="final-text">
                     С любовью,<br />
-                    Дарья & Илья
+                    Илья & Дарья
                 </p>
 
             </div>

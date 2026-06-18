@@ -1,6 +1,8 @@
 ﻿// wwwroot/js/guests.js
 // Профессиональный модуль управления гостями: загрузка, поиск, CRUD, статистика, UI‑фидбек
-
+let guestModal;
+let editMode = false;
+let guestsCache = [];
 (() => {
     // --- Конфигурация ---
     const endpoints = {
@@ -17,7 +19,32 @@
 
     // --- Инициализация модуля ---
     document.addEventListener("DOMContentLoaded", init);
+    document.addEventListener("DOMContentLoaded", () => {
+        const coupleCheckbox = document.getElementById("couple");
+        const genderBlock = document.getElementById("genderBlock");
 
+        function toggleGender() {
+            if (coupleCheckbox.checked) {
+                genderBlock.style.display = "none";
+
+                document.getElementById("genderMale").checked = false;
+                document.getElementById("genderFemale").checked = false;
+            } else {
+                genderBlock.style.display = "block";
+            }
+        }
+
+        coupleCheckbox.addEventListener("change", toggleGender);
+
+        toggleGender();
+    });
+    document.getElementById("guestModal")
+        .addEventListener("hidden.bs.modal", () => {
+            clearForm();
+            editMode = false;
+            document.getElementById("guestId").value = "";
+            document.getElementById("guestModalTitle").innerText = "Добавить гостя";
+        });
     function init() {
         inputName = document.getElementById("nameGuest");
         inputCity = document.getElementById("cityGuest");
@@ -30,6 +57,13 @@
         legendContainer = document.getElementById("legend");
         cityDatalist = document.getElementById("cityList");
 
+        guestModal = new bootstrap.Modal(
+            document.getElementById("guestModal")
+        );
+
+        window.openAddGuestModal = openAddGuestModal;
+        window.saveGuest = saveGuest;
+
         // Защита: если ключевые элементы отсутствуют — логируем и прекращаем работу
         if (!guestListTbody || !statsContainer || !legendContainer) {
             console.error("Guests module: required DOM elements not found");
@@ -41,6 +75,7 @@
         window.deleteGuest = deleteGuest;
         window.editGuest = editGuest;
         window.loadGuests = loadGuests;
+        window.copyInviteLink = copyInviteLink;
         window.searchGuests = debounce(searchGuests, 300);
 
         // Подписка на поиск
@@ -49,6 +84,27 @@
         // Рендер легенды и начальная загрузка
         renderLegend();
         loadGuests();
+    }
+
+    async function saveGuest() {
+        if (editMode) {
+            await updateGuest();
+        } else {
+            await addGuest();
+        }
+    }
+
+    function openAddGuestModal() {
+        editMode = false;
+
+        document.getElementById("guestModalTitle").innerText =
+            "Добавить гостя";
+
+        document.getElementById("guestId").value = "";
+
+        clearForm();
+
+        guestModal.show();
     }
 
     // --- Вспомогательные утилиты ---
@@ -112,10 +168,14 @@
         try {
             const side = document.querySelector("input[name='side']:checked")?.value;
             const relation = document.querySelector("input[name='relation']:checked")?.value;
-
+            const gender =
+                document.getElementById("genderMale")?.checked ? "Male" :
+                    document.getElementById("genderFemale")?.checked ? "Female" :
+                        null;
             const guest = {
                 name: (inputName?.value ?? "").trim(),
                 city: (inputCity?.value ?? "").trim(),
+                gender: gender,
                 coupleOrNot: !!(inputCouple && inputCouple.checked),
                 youngOrNot: !!(inputYoungGuest && inputYoungGuest.checked),
                 husbandGuestOrNot: side === "husband",
@@ -129,6 +189,11 @@
                 return;
             }
 
+            if (!guest.coupleOrNot && !guest.gender) {
+                showToast("Выберите пол гостя", "warning");
+                return;
+            }
+
             await safeFetch(endpoints.addGuest, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -136,17 +201,19 @@
             });
 
             showToast("Гость добавлен", "success");
+            guestModal.hide();
             clearForm();
             await loadGuests();
         } catch (err) {
             showToast("Ошибка при добавлении гостя", "danger");
         }
+
     }
 
     async function deleteGuest(id) {
         try {
             if (!confirm("Удалить гостя?")) return;
-            await safeFetch(`${endpoints.deleteGuest}?id=${encodeURIComponent(id)}`, { method: "DELETE" });
+            await safeFetch(`${endpoints.deleteGuest}?id=${encodeURIComponent(id)}`, { method: "POST" });
             showToast("Гость удалён", "success");
             await loadGuests();
         } catch (err) {
@@ -155,33 +222,100 @@
     }
 
     async function editGuest(id) {
-        try {
-            const row = document.querySelector(`tr[data-id='${id}']`);
-            if (!row) return showToast("Строка не найдена", "warning");
+        const guest = guestsCache.find(x => x.id === id);
 
-            const cells = row.children;
-            const newName = prompt("Имя:", cells[0].innerText) ?? cells[0].innerText;
-            const city = prompt("Город:", cells[1].innerText) ?? cells[1].innerText;
-            const couple = confirm("Пара? (OK = Да, Cancel = Нет)");
-            const young = confirm("Молодежь? (OK = Да, Cancel = Нет)");
+        if (!guest) {
+            showToast("Гость не найден", "warning");
+            return;
+        }
+
+        editMode = true;
+
+        document.getElementById("guestModalTitle").innerText =
+            "Редактирование гостя";
+
+        document.getElementById("guestId").value = guest.id;
+
+        inputName.value = guest.name || "";
+        inputCity.value = guest.city || "";
+
+        inputCouple.checked = guest.coupleOrNot;
+        inputYoungGuest.checked = guest.youngOrNot;
+
+        document.getElementById("genderMale").checked =
+            guest.gender === "Male";
+
+        document.getElementById("genderFemale").checked =
+            guest.gender === "Female";
+
+        document.getElementById("sideHusband").checked =
+            guest.husbandGuestOrNot;
+
+        document.getElementById("sideWife").checked =
+            guest.wifeGuestOrNot;
+
+        document.getElementById("relRelative").checked =
+            guest.relativeOrNot;
+
+        document.getElementById("relFriend").checked =
+            guest.friendOrNot;
+
+        document.getElementById("couple")
+            .dispatchEvent(new Event("change"));
+
+        guestModal.show();
+    }
+
+    async function updateGuest() {
+        try {
+            const id = Number(document.getElementById("guestId").value);
+
+            const side = document.querySelector("input[name='side']:checked")?.value;
+            const relation = document.querySelector("input[name='relation']:checked")?.value;
+
+            const gender =
+                document.getElementById("genderMale").checked
+                    ? "Male"
+                    : document.getElementById("genderFemale").checked
+                        ? "Female"
+                        : null;
 
             const guest = {
                 id,
-                name: newName.trim(),
-                city: city.trim(),
-                coupleOrNot: couple,
-                youngOrNot: young
+                name: inputName.value.trim(),
+                city: inputCity.value.trim(),
+                gender,
+                coupleOrNot: inputCouple.checked,
+                youngOrNot: inputYoungGuest.checked,
+                husbandGuestOrNot: side === "husband",
+                wifeGuestOrNot: side === "wife",
+                relativeOrNot: relation === "relative",
+                friendOrNot: relation === "friend"
             };
 
+            // ✅ ВАЛИДАЦИЯ ТУТ
+            if (!guest.name) {
+                showToast("Введите имя гостя", "warning");
+                return;
+            }
+
+            if (!guest.coupleOrNot && !guest.gender) {
+                showToast("Выберите пол гостя", "warning");
+                return;
+            }
+
             await safeFetch(endpoints.updateGuest, {
-                method: "PUT",
+                method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(guest)
             });
 
             showToast("Гость обновлён", "success");
+            guestModal.hide();
             await loadGuests();
+
         } catch (err) {
+            console.error(err);
             showToast("Ошибка при обновлении гостя", "danger");
         }
     }
@@ -211,9 +345,54 @@
             renderStats(guests);
             renderLegend();
             updateCityList(guests);
+            guestsCache = guests;
         } catch (err) {
             showToast("Не удалось загрузить список гостей", "danger");
         }
+    }
+
+    function copyInviteLink(token) {
+        const url = `${window.location.origin}/Invite/${token}`;
+
+        try {
+            // современный API (если разрешён)
+            if (navigator.clipboard && document.hasFocus()) {
+                navigator.clipboard.writeText(url)
+                    .then(() => showToast("Ссылка скопирована", "success"))
+                    .catch(() => fallbackCopy(url));
+
+                return;
+            }
+
+            fallbackCopy(url);
+        } catch (e) {
+            showToast("Не удалось скопировать ссылку", "danger")
+            fallbackCopy(url);
+        }
+    }
+
+    function fallbackCopy(text) {
+        const textarea = document.createElement("textarea");
+        textarea.value = text;
+
+        // важно: не скрытый display:none (он ломает execCommand в некоторых браузерах)
+        textarea.style.position = "fixed";
+        textarea.style.left = "-9999px";
+        textarea.style.top = "0";
+
+        document.body.appendChild(textarea);
+        textarea.focus();
+        textarea.select();
+
+        try {
+            document.execCommand("copy");
+            showToast("Ссылка скопирована", "success");
+        } catch (e) {
+            console.error(e);
+            showToast("Не удалось скопировать", "danger");
+        }
+
+        document.body.removeChild(textarea);
     }
 
     // --- Рендеринг UI ---
@@ -298,23 +477,45 @@
             tr.setAttribute("data-id", g.id);
 
             tr.innerHTML = `
-        <td style="background:${color}">${escapeHtml(g.name)}</td>
-        <td style="background:${color}">${escapeHtml(g.city ?? "")}</td>
-        <td style="background:${color}" class="text-center">
-          <i class="bi ${g.coupleOrNot ? "bi-check-circle-fill text-success" : "bi-x-circle-fill text-danger"}" aria-hidden="true"></i>
-        </td>
-        <td style="background:${color}" class="text-center">
-          <i class="bi ${g.confirmation ? "bi-check-circle-fill text-success" : "bi-x-circle-fill text-danger"}" aria-hidden="true"></i>
-        </td>
-        <td style="background:${color}" class="text-end">
-          <button class="btn btn-sm btn-warning me-1" data-action="edit" data-id="${g.id}" title="Изменить">
-            <i class="bi bi-pencil-fill"></i>
-          </button>
-          <button class="btn btn-sm btn-danger" data-action="delete" data-id="${g.id}" title="Удалить">
-            <i class="bi bi-trash-fill"></i>
-          </button>
-        </td>
-      `;
+  <td style="background:${color}">${escapeHtml(g.name)}</td>
+  <td style="background:${color}">${escapeHtml(g.city ?? "")}</td>
+
+  <td style="background:${color}" class="text-center">
+    ${g.coupleOrNot
+                    ? "Пара"
+                    : g.gender === "Male"
+                        ? "М"
+                        : g.gender === "Female"
+                            ? "Ж"
+                            : "-"}
+  </td>
+
+  <td style="background:${color}" class="text-center">
+    <i class="bi ${g.confirmation
+                    ? "bi-check-circle-fill text-success"
+                    : "bi-x-circle-fill text-danger"}"></i>
+  </td>
+
+  <td style="background:${color}" class="text-end">
+    <button class="btn btn-sm btn-primary me-1"
+      data-action="copy"
+      data-token="${g.inviteToken}">
+      <i class="bi bi-link-45deg"></i>
+    </button>
+
+    <button class="btn btn-sm btn-warning me-1"
+      data-action="edit"
+      data-id="${g.id}">
+      <i class="bi bi-pencil-fill"></i>
+    </button>
+
+    <button class="btn btn-sm btn-danger"
+      data-action="delete"
+      data-id="${g.id}">
+      <i class="bi bi-trash-fill"></i>
+    </button>
+  </td>
+`;
 
             fragment.appendChild(tr);
         });
@@ -327,6 +528,9 @@
             btn.onclick = (e) => {
                 const id = btn.getAttribute("data-id");
                 const action = btn.getAttribute("data-action");
+                const token = btn.getAttribute("data-token");
+
+                if (action === "copy") copyInviteLink(token);
                 if (action === "edit") editGuest(Number(id));
                 if (action === "delete") deleteGuest(Number(id));
             };
@@ -345,6 +549,8 @@
         if (inputCity) inputCity.value = "";
         if (inputCouple) inputCouple.checked = false;
         if (inputYoungGuest) inputYoungGuest.checked = false;
+        document.getElementById("genderMale").checked = false;
+        document.getElementById("genderFemale").checked = false;
         document.querySelectorAll("input[name='side']").forEach(x => x.checked = false);
         document.querySelectorAll("input[name='relation']").forEach(x => x.checked = false);
     }

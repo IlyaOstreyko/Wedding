@@ -15,6 +15,17 @@ namespace Wedding.Repositories
                 .ThenInclude(a => a.SelectedOption)
                 .FirstOrDefaultAsync(g => g.Id == id);
 
+        public async Task<List<Guest>> GetAllWithAnswersAsync()
+        {
+            return await _context.Guests
+                .Include(g => g.SurveyAnswers)
+                    .ThenInclude(a => a.Question)
+                .Include(g => g.SurveyAnswers)
+                    .ThenInclude(a => a.SelectedOption)
+                .OrderBy(g => g.Name)
+                .ToListAsync();
+        }
+
         public async Task<Guest?> GetByTokenAsync(string token) =>
             await _dbSet.FirstOrDefaultAsync(g => g.InviteToken == token);
     }
