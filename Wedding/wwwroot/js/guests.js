@@ -409,56 +409,89 @@ let guestsCache = [];
 
     function renderStats(guests) {
         const stats = {
-            total: 0, young: 0, couples: 0, relatives: 0, friends: 0, husbandSide: 0, wifeSide: 0
+            total: 0,
+            totalConfirmed: 0,
+
+            young: 0,
+            youngConfirmed: 0,
+
+            couples: 0,
+            couplesConfirmed: 0,
+
+            relatives: 0,
+            relativesConfirmed: 0,
+
+            friends: 0,
+            friendsConfirmed: 0,
+
+            husbandSide: 0,
+            husbandSideConfirmed: 0,
+
+            wifeSide: 0,
+            wifeSideConfirmed: 0
         };
-        const cities = {};
 
         guests.forEach(g => {
             const multiplier = g.coupleOrNot ? 2 : 1;
+
             stats.total += multiplier;
-            if (g.youngOrNot) stats.young += multiplier;
-            if (g.coupleOrNot) stats.couples += 1;
-            if (g.relativeOrNot) stats.relatives += multiplier;
-            if (g.friendOrNot) stats.friends += multiplier;
-            if (g.husbandGuestOrNot) stats.husbandSide += multiplier;
-            if (g.wifeGuestOrNot) stats.wifeSide += multiplier;
+            if (g.confirmation) stats.totalConfirmed += multiplier;
 
-            const city = g.city ?? "Не указан";
-            cities[city] = (cities[city] || 0) + multiplier;
+            if (g.youngOrNot) {
+                stats.young += multiplier;
+                if (g.confirmation) stats.youngConfirmed += multiplier;
+            }
+
+            if (g.coupleOrNot) {
+                stats.couples += 1;
+                if (g.confirmation) stats.couplesConfirmed += 1;
+            }
+
+            if (g.relativeOrNot) {
+                stats.relatives += multiplier;
+                if (g.confirmation) stats.relativesConfirmed += multiplier;
+            }
+
+            if (g.friendOrNot) {
+                stats.friends += multiplier;
+                if (g.confirmation) stats.friendsConfirmed += multiplier;
+            }
+
+            if (g.husbandGuestOrNot) {
+                stats.husbandSide += multiplier;
+                if (g.confirmation) stats.husbandSideConfirmed += multiplier;
+            }
+
+            if (g.wifeGuestOrNot) {
+                stats.wifeSide += multiplier;
+                if (g.confirmation) stats.wifeSideConfirmed += multiplier;
+            }
         });
-
-        const cityHtml = Object.entries(cities)
-            .map(([c, cnt]) => `<li>${escapeHtml(c)}: ${cnt}</li>`)
-            .join("");
 
         statsContainer.innerHTML = `
       <div class="row">
         <div class="col-md-4">
           <h6 class="mb-2">Общее</h6>
           <ul class="mb-0">
-            <li>Всего гостей (с учётом пар): <strong>${stats.total}</strong></li>
-            <li>Молодёжь: <strong>${stats.young}</strong></li>
-            <li>Пары: <strong>${stats.couples}</strong></li>
+            <li>Всего гостей: <strong>${stats.total} (${stats.totalConfirmed})</strong></li>
+            <li>Молодёжь: <strong>${stats.young} (${stats.youngConfirmed})</strong></li>
+            <li>Пары: <strong>${stats.couples} (${stats.couplesConfirmed})</strong></li>
           </ul>
         </div>
         <div class="col-md-4">
           <h6 class="mb-2">Тип</h6>
           <ul class="mb-0">
-            <li>Родственники: <strong>${stats.relatives}</strong></li>
-            <li>Друзья: <strong>${stats.friends}</strong></li>
+            <li>Родственники: <strong>${stats.relatives} (${stats.relativesConfirmed})</strong></li>
+            <li>Друзья: <strong>${stats.friends} (${stats.friendsConfirmed})</strong></li>
           </ul>
         </div>
         <div class="col-md-4">
           <h6 class="mb-2">Стороны</h6>
           <ul class="mb-0">
-            <li>Со стороны мужа: <strong>${stats.husbandSide}</strong></li>
-            <li>Со стороны жены: <strong>${stats.wifeSide}</strong></li>
+            <li>Со стороны мужа: <strong>${stats.husbandSide} (${stats.husbandSideConfirmed})</strong></li>
+            <li>Со стороны жены: <strong>${stats.wifeSide} (${stats.wifeSideConfirmed})</strong></li>
           </ul>
         </div>
-      </div>
-      <div class="mt-3">
-        <h6>По городам</h6>
-        <ul class="mb-0">${cityHtml}</ul>
       </div>
     `;
     }
