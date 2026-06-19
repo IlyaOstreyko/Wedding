@@ -375,7 +375,7 @@ body {
 .survey-note {
     margin-top: 8px;
     font-size: 0.85rem;
-    color: rgba(255,255,255,0.7); /* подстройте под вашу палитру */
+    color: rgba(255,255,255,0.7);
     text-align: center;
     font-style: italic;
 }
@@ -889,17 +889,14 @@ body {
     -moz-osx-font-smoothing: grayscale;
 }
 
-/* ВСЕ заголовки */
 h1, h2, h3, h4, h5, h6 {
     color: var(--text);
 }
 
-/* ВСЕ параграфы */
 p {
     color: var(--muted);
 }
 
-/* Любой текст внутри glass */
 .glass-card {
     color: var(--text);
 }
@@ -914,7 +911,6 @@ p {
         color: var(--text-strong);
     }
 
-    /* muted внутри glass остаётся muted */
     .glass-card .muted,
     .glass-card small,
     .glass-card .text-muted {

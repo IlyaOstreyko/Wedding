@@ -74,6 +74,7 @@ namespace Wedding.Controllers
             existing.WifeGuestOrNot = guest.WifeGuestOrNot;
             existing.RelativeOrNot = guest.RelativeOrNot;
             existing.FriendOrNot = guest.FriendOrNot;
+            existing.ChildrenCount = guest.ChildrenCount;
 
             _uow.Guests.Update(existing);
             await _uow.SaveAsync();

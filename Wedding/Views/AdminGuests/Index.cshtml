@@ -69,7 +69,6 @@
 <div id="guestsToastHolder" aria-live="polite" aria-atomic="true" class="position-fixed top-0 end-0 p-3" style="z-index:1080;"></div>
 
 <style>
-    /* Небольшие стили для легенды и свотчей */
     .legend-swatch {
         width: 28px;
         height: 18px;
@@ -77,7 +76,6 @@
         border-radius: 4px;
         box-shadow: 0 0 0 1px rgba(0,0,0,0.06) inset;
     }
-    /* Уменьшаем высоту кнопок в таблице для компактности */
     table.table .btn-sm {
         padding: .25rem .4rem;
         font-size: .85rem;
@@ -134,6 +132,17 @@
                                 Пара
                             </label>
                         </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">
+                            Количество детей
+                        </label>
+
+                        <input id="childrenCount"
+                               type="number"
+                               min="0"
+                               value="0"
+                               class="form-control">
                     </div>
                 </div>
 

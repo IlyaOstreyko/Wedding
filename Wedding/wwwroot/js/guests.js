@@ -3,6 +3,8 @@
 let guestModal;
 let editMode = false;
 let guestsCache = [];
+let inputChildrenCount;
+
 (() => {
     // --- Конфигурация ---
     const endpoints = {
@@ -60,6 +62,8 @@ let guestsCache = [];
         guestModal = new bootstrap.Modal(
             document.getElementById("guestModal")
         );
+        inputChildrenCount =
+            document.getElementById("childrenCount");
 
         window.openAddGuestModal = openAddGuestModal;
         window.saveGuest = saveGuest;
@@ -178,6 +182,11 @@ let guestsCache = [];
                 gender: gender,
                 coupleOrNot: !!(inputCouple && inputCouple.checked),
                 youngOrNot: !!(inputYoungGuest && inputYoungGuest.checked),
+
+                childrenCount: Number(
+                    inputChildrenCount?.value || 0
+                ),
+
                 husbandGuestOrNot: side === "husband",
                 wifeGuestOrNot: side === "wife",
                 relativeOrNot: relation === "relative",
@@ -228,6 +237,9 @@ let guestsCache = [];
             showToast("Гость не найден", "warning");
             return;
         }
+
+        inputChildrenCount.value =
+            guest.childrenCount || 0;
 
         editMode = true;
 
@@ -285,8 +297,14 @@ let guestsCache = [];
                 name: inputName.value.trim(),
                 city: inputCity.value.trim(),
                 gender,
+
                 coupleOrNot: inputCouple.checked,
                 youngOrNot: inputYoungGuest.checked,
+
+                childrenCount: Number(
+                    inputChildrenCount.value || 0
+                ),
+
                 husbandGuestOrNot: side === "husband",
                 wifeGuestOrNot: side === "wife",
                 relativeOrNot: relation === "relative",
@@ -411,7 +429,8 @@ let guestsCache = [];
         const stats = {
             total: 0,
             totalConfirmed: 0,
-
+            children: 0,
+            childrenConfirmed: 0,
             young: 0,
             youngConfirmed: 0,
 
@@ -442,6 +461,14 @@ let guestsCache = [];
                 if (g.confirmation) stats.youngConfirmed += multiplier;
             }
 
+            const children =
+                Number(g.childrenCount || 0);
+
+            stats.children += children;
+
+            if (g.confirmation) {
+                stats.childrenConfirmed += children;
+            }
             if (g.coupleOrNot) {
                 stats.couples += 1;
                 if (g.confirmation) stats.couplesConfirmed += 1;
@@ -476,6 +503,13 @@ let guestsCache = [];
             <li>Всего гостей: <strong>${stats.total} (${stats.totalConfirmed})</strong></li>
             <li>Молодёжь: <strong>${stats.young} (${stats.youngConfirmed})</strong></li>
             <li>Пары: <strong>${stats.couples} (${stats.couplesConfirmed})</strong></li>
+            <li>
+    Дети:
+    <strong>
+        ${stats.children}
+        (${stats.childrenConfirmed})
+    </strong>
+</li>
           </ul>
         </div>
         <div class="col-md-4">
@@ -530,6 +564,7 @@ let guestsCache = [];
   </td>
 
   <td style="background:${color}" class="text-end">
+  <div class="btn-group">
     <button class="btn btn-sm btn-primary me-1"
       data-action="copy"
       data-token="${g.inviteToken}">
@@ -547,6 +582,7 @@ let guestsCache = [];
       data-id="${g.id}">
       <i class="bi bi-trash-fill"></i>
     </button>
+  </div>
   </td>
 `;
 
@@ -582,6 +618,8 @@ let guestsCache = [];
         if (inputCity) inputCity.value = "";
         if (inputCouple) inputCouple.checked = false;
         if (inputYoungGuest) inputYoungGuest.checked = false;
+        if (inputChildrenCount)
+            inputChildrenCount.value = 0;
         document.getElementById("genderMale").checked = false;
         document.getElementById("genderFemale").checked = false;
         document.querySelectorAll("input[name='side']").forEach(x => x.checked = false);

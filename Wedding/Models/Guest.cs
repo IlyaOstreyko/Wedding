@@ -24,6 +24,7 @@ namespace Wedding.Models
         public bool Confirmation { get; set; }
         public Gender? Gender { get; set; }
         public string? Email { get; set; }
+        public int ChildrenCount { get; set; } = 0;
 
         [Required]
         public string InviteToken { get; set; } = Guid.NewGuid().ToString("N");
