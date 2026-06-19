@@ -8,6 +8,7 @@ namespace Wedding.ViewModel
         public string Text { get; set; } = "";
         public bool IsMultipleChoice { get; set; }
         public bool AllowCustomAnswer { get; set; }
+        public string? CustomAnswer { get; set; }
         public List<OptionVm> Options { get; set; } = new();
     }
 }

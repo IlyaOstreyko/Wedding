@@ -28,6 +28,10 @@ namespace Wedding.Controllers
             if (guest == null)
                 return NotFound();
 
+            var guestAnswers = (await _uow.SurveyAnswers.GetAllAsync())
+    .Where(x => x.GuestId == guest.Id)
+    .ToList();
+
             var questions = (await _uow.SurveyQuestions.GetAllWithOptionsAsync())
                 .OrderBy(q => q.Id)
                 .ToList();
@@ -50,18 +54,33 @@ namespace Wedding.Controllers
                 IsConfirmed = guest.Confirmation,
                 IsCouple = guest.CoupleOrNot,
 
-                Questions = filteredQuestions.Select(q => new InviteQuestionVm
+                Questions = filteredQuestions.Select(q =>
                 {
-                    QuestionId = q.Id,
-                    Text = q.Text,
-                    IsMultipleChoice = q.IsMultipleChoice,
-                    AllowCustomAnswer = q.AllowCustomAnswer,
+                    var questionAnswers = guestAnswers
+                        .Where(a => a.QuestionId == q.Id)
+                        .ToList();
 
-                    Options = q.Options.Select(o => new OptionVm
+                    return new InviteQuestionVm
                     {
-                        Id = o.Id,
-                        Text = o.Text
-                    }).ToList()
+                        QuestionId = q.Id,
+                        Text = q.Text,
+                        IsMultipleChoice = q.IsMultipleChoice,
+                        AllowCustomAnswer = q.AllowCustomAnswer,
+
+                        CustomAnswer = questionAnswers
+                            .FirstOrDefault(a => !string.IsNullOrWhiteSpace(a.CustomAnswer))
+                            ?.CustomAnswer,
+
+                        Options = q.Options.Select(o => new OptionVm
+                        {
+                            Id = o.Id,
+                            Text = o.Text,
+
+                            IsSelected = questionAnswers
+                                .Any(a => a.SelectedOptionId == o.Id)
+
+                        }).ToList()
+                    };
                 }).ToList()
             };
 

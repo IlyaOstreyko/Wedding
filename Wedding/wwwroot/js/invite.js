@@ -261,43 +261,32 @@
 
         optionCards.forEach(card => {
 
-            const input =
-                card.querySelector('input');
+            const input = card.querySelector('input');
 
-            if (!input) {
-                return;
+            if (!input) return;
+
+            // сразу подсветить выбранные
+            if (input.checked) {
+                card.classList.add('selected');
             }
-
-            updateOptionState(card, input);
 
             input.addEventListener('change', () => {
 
                 const parentStep =
                     card.closest('.survey-step');
 
-                if (!parentStep) {
-                    return;
-                }
+                if (!parentStep) return;
 
                 if (input.type === 'radio') {
 
-                    const radioCards =
-                        parentStep.querySelectorAll('.option-card');
-
-                    radioCards.forEach(x => {
-
-                        x.classList.remove('selected');
-
-                    });
-
+                    parentStep
+                        .querySelectorAll('.option-card')
+                        .forEach(x => x.classList.remove('selected'));
                 }
 
                 updateOptionState(card, input);
-
             });
-
         });
-
     }
 
     function updateOptionState(card, input) {

@@ -261,10 +261,23 @@
 
                                         <label class="option-card" for="@inputId">
 
-                                            <input type="checkbox"
-                                                   class="option-checkbox"
-                                                   id="@inputId"
-                                                   data-option-id="@opt.Id" />
+                                            @if (q.IsMultipleChoice)
+                                            {
+                                                <input type="checkbox"
+                                                       class="option-checkbox"
+                                                       id="@inputId"
+                                                       data-option-id="@opt.Id"
+                                                @(opt.IsSelected ? "checked" : "") />
+                                            }
+                                            else
+                                            {
+                                                <input type="radio"
+                                                       name="question_@q.QuestionId"
+                                                       class="option-radio"
+                                                       id="@inputId"
+                                                       data-option-id="@opt.Id"
+                                                @(opt.IsSelected ? "checked" : "") />
+                                            }
 
                                             <span class="custom-check"></span>
 
@@ -288,7 +301,8 @@
                                         <input type="text"
                                                id="customAnswer_@i"
                                                class="custom-answer"
-                                               placeholder="Введите ваш ответ" />
+                                               placeholder="Введите ваш ответ"
+                                               value="@q.CustomAnswer" />
 
                                     </div>
                                 }

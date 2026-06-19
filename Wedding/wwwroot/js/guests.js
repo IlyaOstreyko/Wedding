@@ -565,13 +565,13 @@ let inputChildrenCount;
 
   <td style="background:${color}" class="text-end">
   <div class="btn-group">
-    <button class="btn btn-sm btn-primary me-1"
+    <button class="btn btn-sm btn-primary"
       data-action="copy"
       data-token="${g.inviteToken}">
       <i class="bi bi-link-45deg"></i>
     </button>
 
-    <button class="btn btn-sm btn-warning me-1"
+    <button class="btn btn-sm btn-warning"
       data-action="edit"
       data-id="${g.id}">
       <i class="bi bi-pencil-fill"></i>

@@ -118,12 +118,12 @@
 
                     <div class="btn-group">
 
-                        <button class="btn btn-sm btn-outline-warning"
+                        <button class="btn btn-sm btn-warning"
                                 onclick="editQuestion(${q.id})">
                             <i class="bi bi-pencil-fill"></i>
                         </button>
 
-                        <button class="btn btn-sm btn-outline-danger"
+                        <button class="btn btn-sm btn-danger"
                                 onclick="deleteQuestion(${q.id})">
                             <i class="bi bi-trash-fill"></i>
                         </button>
