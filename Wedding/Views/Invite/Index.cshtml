@@ -112,6 +112,8 @@
 
                 <div class="timeline-item fade-up">
 
+                    <div class="timeline-dot"></div>
+
                     <div class="timeline-time">
                         10:30
                     </div>
@@ -131,6 +133,8 @@
                 </div>
 
                 <div class="timeline-item fade-up delay-1">
+
+                    <div class="timeline-dot"></div>
 
                     <div class="timeline-time">
                         16:00
@@ -259,7 +263,7 @@
                                     {
                                         var inputId = $"opt_{q.QuestionId}_{opt.Id}";
 
-                                        <label class="option-card" for="@inputId">
+                                        <label class="option-card @(opt.IsSelected ? "selected" : "")" for="@inputId">
 
                                             @if (q.IsMultipleChoice)
                                             {
@@ -279,7 +283,14 @@
                                                 @(opt.IsSelected ? "checked" : "") />
                                             }
 
-                                            <span class="custom-check"></span>
+                                            @if (q.IsMultipleChoice)
+                                            {
+                                                <span class="custom-check"></span>
+                                            }
+                                            else
+                                            {
+                                                <span class="custom-radio"></span>
+                                            }
 
                                             <span class="option-text">
                                                 @opt.Text

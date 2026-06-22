@@ -94,12 +94,16 @@
     document.addEventListener('DOMContentLoaded', () => {
 
         initializeSurvey();
+
         initializeCountdownEffects();
+
         initializeAttendanceToggle();
+
         initializeOptionCards();
 
         initializeScrollEffects();
 
+        initializeCinematicBackground();
     });
 
     /* =========================================================
@@ -142,22 +146,6 @@
             ((currentStep + 1) / steps.length) * 100;
 
         progressBar.style.width = `${progress}%`;
-
-    }
-
-    function scrollToSurveyTop() {
-
-        const wrapper =
-            document.querySelector('.survey-wrapper');
-
-        if (!wrapper) {
-            return;
-        }
-
-        wrapper.scrollIntoView({
-            behavior: 'smooth',
-            block: 'start'
-        });
 
     }
 
@@ -259,34 +247,54 @@
         const optionCards =
             document.querySelectorAll('.option-card');
 
+
         optionCards.forEach(card => {
 
             const input = card.querySelector('input');
 
             if (!input) return;
 
-            // сразу подсветить выбранные
-            if (input.checked) {
-                card.classList.add('selected');
-            }
+
+            // начальное состояние
+            updateOptionState(card, input);
+
 
             input.addEventListener('change', () => {
+
 
                 const parentStep =
                     card.closest('.survey-step');
 
+
                 if (!parentStep) return;
 
+
+
+                // radio - убрать выделение у остальных
                 if (input.type === 'radio') {
 
                     parentStep
                         .querySelectorAll('.option-card')
-                        .forEach(x => x.classList.remove('selected'));
+                        .forEach(x => {
+
+                            const radio = x.querySelector('.option-radio');
+
+                            if (radio && radio !== input) {
+                                x.classList.remove('selected');
+                            }
+
+                        });
+
                 }
 
+
                 updateOptionState(card, input);
+
             });
+
+
         });
+
     }
 
     function updateOptionState(card, input) {
@@ -663,8 +671,6 @@
     /* =========================================================
    CINEMATIC BACKGROUND SCROLL EFFECT
    ========================================================= */
-
-    initializeCinematicBackground();
 
     function initializeCinematicBackground() {
 

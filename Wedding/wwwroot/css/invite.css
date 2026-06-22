@@ -107,20 +107,6 @@ body {
 }
 
 /* =========================================================
-   HERO
-   ========================================================= */
-
-.hero-section {
-    position: relative;
-    height: 100vh;
-    min-height: 760px;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-/* =========================================================
    HERO PARALLAX CINEMATIC
    ========================================================= */
 
@@ -140,14 +126,6 @@ body {
 /* ТЕМНОТА + BLUR */
 
 /* КОНТЕНТ */
-
-.hero-content {
-    position: relative;
-    z-index: 3;
-    text-align: center;
-    padding: 20px;
-    text-shadow: 0 10px 40px rgba(0,0,0,.55);
-}
 
 .hero-content {
     position: relative;
@@ -257,80 +235,64 @@ body {
     line-height: 2;
 }
 
-.guest-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    margin-top: 2rem;
-    padding: 14px 22px;
-    border-radius: 999px;
-    background: var(--gold-soft);
-    color: var(--gold);
-    font-size: .95rem;
-    font-weight: 500;
-}
-
 /* =========================================================
    TIMELINE
    ========================================================= */
 
 .timeline {
     position: relative;
+    padding-left: 70px;
 }
+
+
+    /* вертикальная линия слева от всего */
 
     .timeline::before {
         content: "";
         position: absolute;
-        left: 70px;
+        left: 25px;
         top: 0;
         bottom: 0;
-        width: 1px;
-        background: linear-gradient( to bottom, transparent, rgba(212,175,55,.5), transparent );
+        width: 1.5px;
+        background: linear-gradient( to bottom, transparent, rgba(212,175,55,.55), transparent );
     }
+
+
+
+/* один пункт */
 
 .timeline-item {
     position: relative;
     display: grid;
-    grid-template-columns: 140px 1fr;
-    gap: 3rem;
-    margin-bottom: 5rem;
+    grid-template-columns: 30px 100px 1fr;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    align-items: center;
 }
+
+
+
+/* желтый кружок между линией и временем */
+
+.timeline-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--gold);
+    box-shadow: 0 0 20px rgba(212,175,55,.8);
+    align-self: center;
+}
+
+
+/* время */
 
 .timeline-time {
     position: relative;
-    font-size: clamp(2rem, 4vw, 3rem);
+    font-size: 2.5rem;
+    line-height: 1;
     font-weight: 300;
+    justify-self: start;
     color: var(--gold);
-}
-
-    .timeline-time::after {
-        content: "";
-        position: absolute;
-        top: 50%;
-        right: -15px;
-        width: 12px;
-        height: 12px;
-        border-radius: 999px;
-        background: var(--gold);
-        transform: translateY(-50%);
-        box-shadow: 0 0 20px rgba(212,175,55,.7);
-    }
-
-.timeline-content h3 {
-    margin: 0 0 1rem;
-    font-size: clamp(2rem, 5vw, 3rem);
-    font-family: "Cormorant Garamond", serif;
-    font-weight: 400;
-}
-
-.timeline-content p {
-    margin-bottom: .8rem;
-    color: var(--muted);
-    font-size: 1.1rem;
-}
-
-.timeline-location {
-    color: rgba(255,255,255,.5);
 }
 
 /* =========================================================
@@ -412,14 +374,6 @@ body {
     background: linear-gradient( 90deg, var(--gold), #ffe08a );
     transition: width .5s ease;
 }
-
-.survey-step {
-    display: none;
-}
-
-    .survey-step.active {
-        display: block;
-    }
 
 .step-counter {
     margin-bottom: 1rem;
@@ -662,13 +616,35 @@ body {
         letter-spacing: 4px;
     }
 
+    .timeline {
+        position: relative;
+        padding-left: 30px;
+    }
+
     .timeline::before {
         display: none;
     }
 
     .timeline-item {
-        grid-template-columns: 1fr;
+        grid-template-columns: 30px 1fr;
+        grid-template-rows: auto auto;
+        align-items: start;
         gap: 1rem;
+    }
+
+    .timeline-dot {
+        grid-column: 1;
+        grid-row: 1;
+        justify-self: start;
+    }
+    .timeline-time {
+        grid-column: 2;
+        grid-row: 1;
+    }
+
+    .timeline-content {
+        grid-column: 2;
+        grid-row: 2;
     }
 
     .timeline-time::after {
@@ -729,8 +705,9 @@ body {
    ========================================================= */
 
 .survey-step {
-    position: absolute;
+    position: relative;
     width: 100%;
+    display: none;
     opacity: 0;
     transform: translateX(30px);
     pointer-events: none;
@@ -738,20 +715,10 @@ body {
 }
 
     .survey-step.active {
-        position: relative;
+        display: block;
         opacity: 1;
         transform: translateX(0);
         pointer-events: auto;
-    }
-
-    .survey-step.exit-left {
-        opacity: 0;
-        transform: translateX(-30px);
-    }
-
-    .survey-step.enter-right {
-        opacity: 1;
-        transform: translateX(0);
     }
 
 /* =========================================================
@@ -759,9 +726,9 @@ body {
    ========================================================= */
 
 .option-card.selected {
-    border-color: rgba(212,175,55,.6);
-    background: rgba(212,175,55,.08);
-    box-shadow: 0 10px 30px rgba(212,175,55,.15);
+    border-color: var(--gold);
+    background: rgba(212,175,55,.14);
+    box-shadow: 0 0 25px rgba(212,175,55,.25), inset 0 0 20px rgba(212,175,55,.08);
 }
 
 /* =========================================================
@@ -874,10 +841,6 @@ body {
         height: 52px;
         font-size: 1.5rem;
     }
-
-    .toast {
-        width: 90vw;
-    }
 }
 /* =========================================================
    TYPOGRAPHY CONTRAST SYSTEM (FIX)
@@ -916,9 +879,6 @@ p {
     .glass-card .text-muted {
         color: rgba(255,255,255,.65) !important;
     }
-.text-dark {
-    color: var(--text) !important;
-}
 
 .text-muted {
     color: rgba(255,255,255,.65) !important;
