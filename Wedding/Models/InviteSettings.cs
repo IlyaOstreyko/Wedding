@@ -4,6 +4,17 @@
     {
         public string GroomName { get; set; } = "";
         public string BrideName { get; set; } = "";
+        public DateTime? WeddingDate { get; set; } = DateTime.MaxValue;
+        public string Paragraph1 { get; set; } = "";
+        public string Paragraph2 { get; set; } = "";
+        public string Paragraph3 { get; set; } = "";
+        public string Paragraph4 { get; set; } = "";
+
+        public TimeSpan? CeremonyTime { get; set; }
+        public string CeremonyTime { get; set; } = "";
+
+        public TimeSpan? BanquetTime { get; set; }
+
         public string BackgroundImage { get; set; } = "/Uploads/Backgrounds/frame.png";
         public List<string> AvailableBackgrounds { get; set; } = new();
         public InviteTheme CurrentTheme { get; set; }

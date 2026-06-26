@@ -113,16 +113,31 @@ namespace Wedding.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> NamesSettings(
-    string groomName,
-    string brideName)
+        public async Task<IActionResult> ParagraphsInviteSettings(
+    string paragraph1,
+    string paragraph2,
+    string paragraph3,
+    string paragraph4)
         {
-            var settings =
-                await _service.GetAsync();
-            settings.GroomName =
-                groomName;
-            settings.BrideName =
-                brideName;
+            var settings = await _service.GetAsync();
+            settings.Paragraph1 = paragraph1;
+            settings.Paragraph2 = paragraph2;
+            settings.Paragraph3 = paragraph3;
+            settings.Paragraph4 = paragraph4;
+            await _service.SaveAsync(settings);
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> NamesSettings(
+string groomName,
+string brideName,
+DateTime weddingDate)
+        {
+            var settings = await _service.GetAsync();
+            settings.GroomName = groomName;
+            settings.BrideName = brideName;
+            settings.WeddingDate = weddingDate;
             await _service.SaveAsync(settings);
             return RedirectToAction("Index");
         }

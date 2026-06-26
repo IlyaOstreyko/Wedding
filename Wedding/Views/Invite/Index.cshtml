@@ -1,12 +1,16 @@
 ﻿@using Wedding.Models
 @model Wedding.ViewModel.InvitePageVm
 @using Wedding.Services
+@using System.Globalization
 @inject InviteSettingsService SettingsService
 @{
     Layout = null; // Отключаем глобальный шаблон полностью
     var settings = await SettingsService.GetAsync();
-    var weddingDate = new DateTime(2026, 8, 1, 15, 15, 0);
-    var weddingDateIso = weddingDate.ToString("o");
+    var weddingDate = settings.WeddingDate;
+    var weddingDateIso = settings.WeddingDate.Value.ToString("o");
+    var weddingDateDisplay = weddingDate.HasValue
+    ? weddingDate.Value.ToString("d MMMM yyyy", new CultureInfo("ru-RU"))
+    : "";
     var greeting = Model.IsCouple
     ? "Дорогие"
     : Model.Gender == Gender.Male
@@ -57,7 +61,7 @@
                 <span>&</span>
                 <span class="name">@settings.BrideName</span>
             </h1>
-            <div class="hero-date fade-up delay-2">1 августа 2026</div>
+            <div class="hero-date fade-up delay-2">@weddingDateDisplay</div>
             <a href="#invitation" class="hero-scroll fade-up delay-3">↓</a>
         </div>
     </section>
@@ -67,14 +71,10 @@
             <div class="glass-card fade-up">
                 <div class="section-label">Приглашение</div>
                 <h2 class="editorial-title">@greeting @Model.GuestName</h2>
-                <p class="editorial-text">Мы будем счастливы разделить с вами один из самых важных и трогательных дней нашей жизни.</p>
-                <p class="editorial-text">Приглашаем вас стать частью нашего свадебного торжества, наполненного любовью, теплом и счастливыми моментами.</p>
-                <p class="editorial-text">
-                    Будем признательны, если девушки воздержатся от нарядов преимущественно белого цвета. Пусть в этот вечер он будет только на невесте.
-                </p>
-                <p class="editorial-text">
-                    Вместо букетов можете подарить нам бутылку вашего любимого напитка.
-                </p>
+                <p class="editorial-text">@settings.Paragraph1</p>
+                <p class="editorial-text">@settings.Paragraph2</p>
+                <p class="editorial-text">@settings.Paragraph3</p>
+                <p class="editorial-text">@settings.Paragraph4 </p>
             </div>
         </div>
     </section>

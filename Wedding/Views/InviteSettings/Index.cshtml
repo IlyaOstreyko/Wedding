@@ -18,7 +18,7 @@
                     data-bs-target="#namesSettings"
                     aria-expanded="false">
                 <span>
-                    Настройка имен
+                    Имена молодоженов и дата свадьбы
                 </span>
                 <span class="arrow">
                     ▼
@@ -28,9 +28,6 @@
 
         <div class="collapse" id="namesSettings">
             <div class="card-body">
-                <h5 class="mb-3">
-                    Имена на приглашении
-                </h5>
                 <form method="post"
                       action="/InviteSettings/NamesSettings">
                     <div class="mb-3">
@@ -51,10 +48,153 @@
                                name="brideName"
                                value="@Model.BrideName" />
                     </div>
+                    <div class="mb-3">
+                        <label class="form-label">
+                            Дата свадьбы
+                        </label>
+                        <input type="date"
+                               class="form-control"
+                               name="weddingDate"
+                               value="@Model.WeddingDate?.ToString("yyyy-MM-dd")" />
+                    </div>
                     <button type="submit"
                             class="btn btn-primary">
                         Сохранить
                     </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-header">
+            <button class="btn btn-link text-decoration-none w-100 d-flex justify-content-between align-items-center"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#paragraphsInviteSettings"
+                    aria-expanded="false">
+                <span>
+                    Настройка параграфов пригласительного
+                </span>
+                <span class="arrow">
+                    ▼
+                </span>
+            </button>
+        </div>
+
+        <div class="collapse" id="paragraphsInviteSettings">
+            <div class="card-body">
+                <form method="post"
+                      action="/InviteSettings/ParagraphsInviteSettings">
+
+                    <div class="mb-3">
+                        <label class="form-label">
+                            Первый параграф
+                        </label>
+                        <textarea class="form-control auto-grow"
+                                  name="paragraph1"
+                                  rows="3">@Model.Paragraph1</textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">
+                            Второй параграф
+                        </label>
+                        <textarea class="form-control auto-grow"
+                                  name="paragraph2"
+                                  rows="3">@Model.Paragraph2</textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">
+                            Третий параграф
+                        </label>
+                        <textarea class="form-control auto-grow"
+                                  name="paragraph3"
+                                  rows="3">@Model.Paragraph3</textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">
+                            Четвёртый параграф
+                        </label>
+                        <textarea class="form-control auto-grow"
+                                  name="paragraph4"
+                                  rows="3">@Model.Paragraph4</textarea>
+                    </div>
+
+                    <button type="submit"
+                            class="btn btn-primary">
+                        Сохранить
+                    </button>
+
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-header">
+            <button class="btn btn-link text-decoration-none w-100 d-flex justify-content-between align-items-center"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#dailyPlanSettings"
+                    aria-expanded="false">
+                <span>
+                    Настройка Плана дня
+                </span>
+                <span class="arrow">
+                    ▼
+                </span>
+            </button>
+        </div>
+
+        <div class="collapse" id="dailyPlanSettings">
+            <div class="card-body">
+                <form method="post"
+                      action="/InviteSettings/DailyPlanSettings">
+
+                    <div class="mb-3">
+                        <label class="form-label">
+                            Место проведения церемонии:
+                        </label>
+                        <textarea class="form-control auto-grow"
+                                  name="paragraph1"
+                                  rows="3">@Model.Paragraph1</textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">
+                            Адрес проведения церемонии:
+                        </label>
+                        <textarea class="form-control auto-grow"
+                                  name="paragraph2"
+                                  rows="3">@Model.Paragraph2</textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">
+                            Место проведения банкета:
+                        </label>
+                        <textarea class="form-control auto-grow"
+                                  name="paragraph3"
+                                  rows="3">@Model.Paragraph3</textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">
+                            Адрес проведения банкета:
+                        </label>
+                        <textarea class="form-control auto-grow"
+                                  name="paragraph4"
+                                  rows="3">@Model.Paragraph4</textarea>
+                    </div>
+
+                    <button type="submit"
+                            class="btn btn-primary">
+                        Сохранить
+                    </button>
+
                 </form>
             </div>
         </div>
@@ -266,4 +406,33 @@
     button[aria-expanded="true"] .arrow {
         transform: rotate(180deg);
     }
+
+    .auto-grow {
+        overflow: hidden;
+        resize: none;
+        min-height: 38px;
+    }
 </style>
+<script>
+    function autoResize(textarea) {
+        if (textarea.scrollHeight === 0) return;
+
+        textarea.style.height = 'auto';
+        textarea.style.height = textarea.scrollHeight + 'px';
+    }
+
+    document.querySelectorAll('.auto-grow').forEach(textarea => {
+        autoResize(textarea);
+        textarea.addEventListener('input', function () {
+            autoResize(this);
+        });
+    });
+
+    document.querySelectorAll('.collapse').forEach(collapseEl => {
+        collapseEl.addEventListener('shown.bs.collapse', function () {
+            this.querySelectorAll('.auto-grow').forEach(textarea => {
+                autoResize(textarea);
+            });
+        });
+    });
+</script>
