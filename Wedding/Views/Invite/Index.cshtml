@@ -1,8 +1,10 @@
 ﻿@using Wedding.Models
 @model Wedding.ViewModel.InvitePageVm
+@using Wedding.Services
+@inject InviteSettingsService SettingsService
 @{
     Layout = null; // Отключаем глобальный шаблон полностью
-
+    var settings = await SettingsService.GetAsync();
     var weddingDate = new DateTime(2026, 8, 1, 15, 15, 0);
     var weddingDateIso = weddingDate.ToString("o");
     var greeting = Model.IsCouple
@@ -20,25 +22,41 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Приглашение на свадьбу Ильи и Дарьи</title>
+    <title>Приглашение на свадьбу @settings.GroomName и @settings.BrideName</title>
 
-    <!-- Подключаем шрифты -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 
-    <!-- Подключаем ваши стили -->
     <link rel="stylesheet" href="~/css/invite.css" />
     <link rel="icon" type="image/png" href="~/logo.png" />
+
+    <style>
+        :root {
+            --bg: @(settings.CurrentTheme?.BackgroundColor ?? "#0f0f10");
+            --gold: @(settings.CurrentTheme?.PrimaryColor ?? "#d4af37");
+            --text: @(settings.CurrentTheme?.TextColor ?? "#f5f5f5");
+            --surface: @(settings.CurrentTheme?.CardColor ?? "rgba(255,255,255,0.06)");
+            --gold-radial: radial-gradient(circle at 50% 0%, #fff, var(--gold) 70%, #8b6b23 100%);
+        }
+    </style>
 </head>
 <body>
 
     <section class="hero-section">
-        <div class="global-background"></div>
+        <div class="global-background"
+             style="
+     background-image:url('@settings.BackgroundImage');
+     ">
+        </div>
         <div class="global-background-overlay"></div>
         <div class="hero-content">
             <div class="hero-subtitle fade-up">wedding day</div>
-            <h1 class="hero-title fade-up delay-1">Илья <span>&</span> Дарья</h1>
+            <h1 class="hero-title fade-up delay-1">
+                <span class="name">@settings.GroomName</span>
+                <span>&</span>
+                <span class="name">@settings.BrideName</span>
+            </h1>
             <div class="hero-date fade-up delay-2">1 августа 2026</div>
             <a href="#invitation" class="hero-scroll fade-up delay-3">↓</a>
         </div>
@@ -68,7 +86,7 @@
             <div class="glass-card attendance-card fade-up">
 
                 <div class="section-label">
-                    Илья <span>&</span> Дарья
+                    @settings.GroomName <span>&</span> @settings.BrideName
                 </div>
 
                 <h2 class="editorial-title">
@@ -91,13 +109,9 @@
                     <span class="attendance-toggle-text">
                         @attendanceText
                     </span>
-
                 </label>
-
             </div>
-
         </div>
-
     </section>
 
     <section class="section timeline-section">
@@ -207,7 +221,7 @@
                 <div class="survey-header">
 
                     <div class="section-label">
-                        Илья <span>&</span> Дарья
+                        @settings.GroomName <span>&</span> @settings.BrideName
                     </div>
 
                     <p class="survey-description">
@@ -220,9 +234,7 @@
                             Парам отвечать вместе и с одного устройства
                         </p>
                     }
-
                 </div>
-
 
                 <form id="inviteSurveyForm"
                       class="survey-form"
@@ -314,7 +326,6 @@
                                                class="custom-answer"
                                                placeholder="Введите ваш ответ"
                                                value="@q.CustomAnswer" />
-
                                     </div>
                                 }
 
@@ -346,20 +357,13 @@
                                             Отправить ответы
                                         </button>
                                     }
-
                                 </div>
-
                             </div>
                         }
-
                     </div>
-
                 </form>
-
             </div>
-
         </div>
-
     </section>
 
     <section class="section final-section">
@@ -378,18 +382,39 @@
 
                 <p class="final-text">
                     С любовью,<br />
-                    Илья & Дарья
+                    @settings.GroomName <span>&</span> @settings.BrideName
                 </p>
-
             </div>
-
         </div>
-
     </section>
 
     <div id="inviteToastHolder" class="toast-holder"></div>
 
     <script src="~/js/invite-countdown.js"></script>
     <script src="~/js/invite.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const overlay = document.querySelector('.global-background-overlay');
+
+            const maxBlur = @(settings.CurrentTheme?.ScrollBlur ?? 10);
+            const maxDarken = @((settings.CurrentTheme?.ScrollDarken ?? 0.6).ToString(System.Globalization.CultureInfo.InvariantCulture));
+
+            const maxScrollDistance = 600;
+
+            window.addEventListener("scroll", () => {
+                const scrollY = window.scrollY;
+
+                const progress = Math.min(scrollY / maxScrollDistance, 1);
+
+                const currentBlur = progress * maxBlur;
+                const currentDarken = progress * maxDarken;
+
+                if (overlay) {
+                    overlay.style.backdropFilter = `blur(${currentBlur}px)`;
+                    overlay.style.background = `rgba(0, 0, 0, ${currentDarken})`;
+                }
+            }, { passive: true });
+        });
+    </script>
 </body>
 </html>

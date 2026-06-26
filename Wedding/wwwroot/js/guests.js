@@ -1,5 +1,4 @@
-﻿// wwwroot/js/guests.js
-// Профессиональный модуль управления гостями: загрузка, поиск, CRUD, статистика, UI‑фидбек
+﻿
 let guestModal;
 let editMode = false;
 let guestsCache = [];
@@ -393,7 +392,6 @@ let inputChildrenCount;
         const textarea = document.createElement("textarea");
         textarea.value = text;
 
-        // важно: не скрытый display:none (он ломает execCommand в некоторых браузерах)
         textarea.style.position = "fixed";
         textarea.style.left = "-9999px";
         textarea.style.top = "0";

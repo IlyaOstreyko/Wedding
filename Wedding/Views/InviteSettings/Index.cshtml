@@ -1,0 +1,269 @@
+﻿@model Wedding.Models.InviteSettings
+
+@{
+    Layout = "_Layout";
+}
+
+<div class="container mt-4">
+
+    <h2 class="mb-4">
+        Настройки приглашения
+    </h2>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-header">
+            <button class="btn btn-link text-decoration-none w-100 d-flex justify-content-between align-items-center"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#namesSettings"
+                    aria-expanded="false">
+                <span>
+                    Настройка имен
+                </span>
+                <span class="arrow">
+                    ▼
+                </span>
+            </button>
+        </div>
+
+        <div class="collapse" id="namesSettings">
+            <div class="card-body">
+                <h5 class="mb-3">
+                    Имена на приглашении
+                </h5>
+                <form method="post"
+                      action="/InviteSettings/NamesSettings">
+                    <div class="mb-3">
+                        <label class="form-label">
+                            Имя жениха
+                        </label>
+                        <input type="text"
+                               class="form-control"
+                               name="groomName"
+                               value="@Model.GroomName" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">
+                            Имя невесты
+                        </label>
+                        <input type="text"
+                               class="form-control"
+                               name="brideName"
+                               value="@Model.BrideName" />
+                    </div>
+                    <button type="submit"
+                            class="btn btn-primary">
+                        Сохранить
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-header">
+            <button class="btn btn-link text-decoration-none w-100 d-flex justify-content-between align-items-center"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#backgroundSettings"
+                    aria-expanded="false">
+                <span>
+                    Настройка фона
+                </span>
+                <span class="arrow">
+                    ▼
+                </span>
+            </button>
+        </div>
+        <div class="collapse" id="backgroundSettings">
+            <div class="card-body">
+                <h5 class="mb-3">
+                    Текущий фон
+                </h5>
+                <img src="@Model.BackgroundImage"
+                     class="img-fluid rounded mb-4"
+                     style="max-width:400px;" />
+                <h5>
+                    Выбрать существующий
+                </h5>
+                <div class="d-flex flex-wrap mb-4">
+
+                    @foreach (var img in Model.AvailableBackgrounds)
+                    {
+                        <form method="post"
+                              action="/InviteSettings/SelectBackground">
+
+                            <input type="hidden"
+                                   name="image"
+                                   value="@img" />
+
+                            <button class="btn p-0 m-2"
+                                    type="submit">
+
+                                <img src="@img"
+                                     class="rounded shadow-sm"
+                                     style="width:200px;" />
+
+                            </button>
+
+                        </form>
+                    }
+
+                </div>
+
+                <h5>
+                    Загрузить новый
+                </h5>
+                <form method="post"
+                      action="/InviteSettings/UploadBackgrounds"
+                      enctype="multipart/form-data">
+
+                    <input type="file"
+                           class="form-control mb-3"
+                           name="file"
+                           accept="image/*" />
+
+
+                    <button type="submit"
+                            class="btn btn-primary">
+                        Загрузить
+                    </button>
+
+                </form>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-header">
+            <button class="btn btn-link text-decoration-none w-100 d-flex justify-content-between align-items-center"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#colorSettings"
+                    aria-expanded="false">
+                <span>
+                    Настройка цветов и тем
+                </span>
+                <span class="arrow">
+                    ▼
+                </span>
+            </button>
+        </div>
+
+        <div class="collapse" id="colorSettings">
+            <div class="card-body">
+
+                <ul class="nav nav-pills mb-4" id="themeTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="predefined-tab" data-bs-toggle="tab" data-bs-target="#predefinedThemes" type="button" role="tab">Мои и готовые темы</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="manual-tab" data-bs-toggle="tab" data-bs-target="#manualTheme" type="button" role="tab">Ручная настройка</button>
+                    </li>
+                </ul>
+
+                <div class="tab-content" id="themeTabsContent">
+
+                    <div class="tab-pane fade show active" id="predefinedThemes" role="tabpanel">
+                        <div class="row">
+                            @foreach (var t in Model.SavedThemes)
+                            {
+                                bool isActive = Model.CurrentTheme?.Id == t.Id;
+                                <div class="col-md-4 mb-3">
+                                    <div class="card @(isActive ? "border-primary shadow" : "")" style="background-color: @t.BackgroundColor; color: @t.TextColor;">
+                                        <div class="card-body">
+                                            <h6 style="color: @t.PrimaryColor; margin-bottom: 15px;">
+                                                @t.Name @(isActive ? "(Текущая)" : "")
+                                            </h6>
+                                            <div style="background-color: @t.CardColor; padding: 15px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);">
+                                                <small>Пример стеклянной карточки</small>
+                                            </div>
+                                        </div>
+                                        <div class="card-footer d-flex justify-content-between align-items-center" style="background: rgba(0,0,0,0.5); border-top: none;">
+                                            <form method="post" action="/InviteSettings/ApplyTheme" class="m-0">
+                                                <input type="hidden" name="themeId" value="@t.Id" />
+                                                <button class="btn btn-sm btn-outline-light" disabled="@isActive">Применить</button>
+                                            </form>
+                                            @if (!t.IsPredefined)
+                                            {
+                                                <form method="post" action="/InviteSettings/DeleteTheme" class="m-0">
+                                                    <input type="hidden" name="themeId" value="@t.Id" />
+                                                    <button class="btn btn-sm btn-outline-danger">Удалить</button>
+                                                </form>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="manualTheme" role="tabpanel">
+                        <form method="post" action="/InviteSettings/ColorsSettings">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Основной цвет (Gold)</label>
+                                    <input type="color" class="form-control form-control-color w-100" name="PrimaryColor" value="@(Model.CurrentTheme?.PrimaryColor ?? "#d4af37")" />
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Цвет текста</label>
+                                    <input type="color" class="form-control form-control-color w-100" name="TextColor" value="@(Model.CurrentTheme?.TextColor ?? "#f5f5f5")" />
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Цвет фона страницы</label>
+                                    <input type="color" class="form-control form-control-color w-100" name="BackgroundColor" value="@(Model.CurrentTheme?.BackgroundColor ?? "#0f0f10")" />
+                                </div>
+                                <!-- Новая настройка карточек -->
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label">Базовый цвет карточек</label>
+                                    <input type="color" class="form-control form-control-color w-100" name="CardColorHex" value="@(Model.CurrentTheme?.CardColorHex ?? "#ffffff")" />
+                                </div>
+                                <div class="col-md-8 mb-3">
+                                    <label class="form-label">Прозрачность карточек (стекло): <span id="opacityVal">@(Model.CurrentTheme?.CardOpacity ?? 0.06)</span></label>
+                                    <input type="range" class="form-range" name="CardOpacity" min="0" max="1" step="0.01" value="@(Model.CurrentTheme?.CardOpacity ?? 0.06)" oninput="document.getElementById('opacityVal').innerText = this.value" />
+                                </div>
+
+                                <div class="col-12 mt-3 mb-2">
+                                    <h6 class="border-bottom pb-2">Эффекты при скролле страницы</h6>
+                                </div>
+
+                                <!-- Настройки скролла -->
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Максимальное размытие фона: <span id="blurVal">@(Model.CurrentTheme?.ScrollBlur ?? 10)</span> px</label>
+                                    <input type="range" class="form-range" name="ScrollBlur" min="0" max="30" step="1" value="@(Model.CurrentTheme?.ScrollBlur ?? 10)" oninput="document.getElementById('blurVal').innerText = this.value" />
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Максимальное затемнение: <span id="darkenVal">@(Model.CurrentTheme?.ScrollDarken ?? 0.6)</span></label>
+                                    <input type="range" class="form-range" name="ScrollDarken" min="0" max="1" step="0.05" value="@(Model.CurrentTheme?.ScrollDarken ?? 0.6)" oninput="document.getElementById('darkenVal').innerText = this.value" />
+                                </div>
+
+                                <div class="col-md-12 mb-3 mt-2">
+                                    <label class="form-label">Название темы (если сохраняете как новую)</label>
+                                    <input type="text" class="form-control" name="Name" placeholder="Моя супер тема" />
+                                </div>
+                            </div>
+
+                            <div class="d-flex gap-2 mt-2">
+                                <button type="submit" name="actionType" value="applyCustom" class="btn btn-primary">Применить сейчас</button>
+                                <button type="submit" name="actionType" value="saveCustom" class="btn btn-outline-success">Сохранить как новую тему</button>
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+    .arrow {
+        transition: transform 0.3s ease;
+        font-size: 18px;
+    }
+
+    button[aria-expanded="true"] .arrow {
+        transform: rotate(180deg);
+    }
+</style>

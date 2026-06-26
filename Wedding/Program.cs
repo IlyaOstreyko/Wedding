@@ -3,6 +3,7 @@ using System.Text.Json.Serialization;
 using Wedding.Data;
 using Wedding.Interfaces;
 using Wedding.Repositories;
+using Wedding.Services;
 using Wedding.UnitOfWork;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,6 +15,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite(@$"Data Source={AppDomain.CurrentDomain.BaseDirectory}\App_Data\database.db"));
 
+builder.Services.AddSingleton<InviteSettingsService>();
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IGuestRepository, GuestRepository>();
