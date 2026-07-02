@@ -129,6 +129,26 @@ namespace Wedding.Controllers
         }
 
         [HttpPost]
+        public async Task<IActionResult> DailyPlanSettings(
+TimeSpan timeCeremony,
+string placeCeremony,
+string addressCeremony,
+TimeSpan timeBanquet,
+string placeBanquet,
+string addressBanquet)
+        {
+            var settings = await _service.GetAsync();
+            settings.TimeCeremony = timeCeremony;
+            settings.PlaceCeremony = placeCeremony;
+            settings.AddressCeremony = addressCeremony;
+            settings.TimeBanquet = timeBanquet;
+            settings.PlaceBanquet = placeBanquet;
+            settings.AddressBanquet = addressBanquet;
+            await _service.SaveAsync(settings);
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost]
         public async Task<IActionResult> NamesSettings(
 string groomName,
 string brideName,

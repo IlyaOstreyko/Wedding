@@ -129,18 +129,18 @@
                     <div class="timeline-dot"></div>
 
                     <div class="timeline-time">
-                        10:30
+                        @settings.TimeCeremony?.ToString(@"hh\:mm")
                     </div>
 
                     <div class="timeline-content">
                         <h3>Церемония</h3>
 
                         <p>
-                            ЗАГС Центрального района
+                            @settings.PlaceCeremony
                         </p>
 
                         <div class="timeline-location">
-                            Минск, ул. М. Богдановича, 17а
+                            @settings.AddressCeremony
                         </div>
                     </div>
 
@@ -151,18 +151,18 @@
                     <div class="timeline-dot"></div>
 
                     <div class="timeline-time">
-                        16:00
+                        @settings.TimeBanquet?.ToString(@"hh\:mm")
                     </div>
 
                     <div class="timeline-content">
                         <h3>Банкет</h3>
 
                         <p>
-                            Усадьба «Экзотика»
+                            @settings.PlaceBanquet
                         </p>
 
                         <div class="timeline-location">
-                            Бобруйский район, д. Спорное, 30
+                            @settings.AddressBanquet
                         </div>
                     </div>
 

@@ -10,10 +10,13 @@
         public string Paragraph3 { get; set; } = "";
         public string Paragraph4 { get; set; } = "";
 
-        public TimeSpan? CeremonyTime { get; set; }
-        public string CeremonyTime { get; set; } = "";
+        public TimeSpan? TimeCeremony { get; set; }
+        public string PlaceCeremony { get; set; } = "";
+        public string AddressCeremony { get; set; } = "";
 
-        public TimeSpan? BanquetTime { get; set; }
+        public TimeSpan? TimeBanquet { get; set; }
+        public string PlaceBanquet { get; set; } = "";
+        public string AddressBanquet { get; set; } = "";
 
         public string BackgroundImage { get; set; } = "/Uploads/Backgrounds/frame.png";
         public List<string> AvailableBackgrounds { get; set; } = new();

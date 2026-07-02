@@ -154,13 +154,23 @@
                 <form method="post"
                       action="/InviteSettings/DailyPlanSettings">
 
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label fw-bold">
+                            Время церемонии:
+                        </label>
+                        <input type="time"
+                               class="form-control"
+                               name="timeCeremony"
+                               value="@Model.TimeCeremony?.ToString(@"hh\:mm")" />
+                    </div>
+
                     <div class="mb-3">
                         <label class="form-label">
                             Место проведения церемонии:
                         </label>
                         <textarea class="form-control auto-grow"
-                                  name="paragraph1"
-                                  rows="3">@Model.Paragraph1</textarea>
+                                  name="placeCeremony"
+                                  rows="3">@Model.PlaceCeremony</textarea>
                     </div>
 
                     <div class="mb-3">
@@ -168,8 +178,18 @@
                             Адрес проведения церемонии:
                         </label>
                         <textarea class="form-control auto-grow"
-                                  name="paragraph2"
-                                  rows="3">@Model.Paragraph2</textarea>
+                                  name="addressCeremony"
+                                  rows="3">@Model.AddressCeremony</textarea>
+                    </div>
+
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label fw-bold">
+                            Время банкета:
+                        </label>
+                        <input type="time"
+                               class="form-control"
+                               name="timeBanquet"
+                               value="@Model.TimeBanquet?.ToString(@"hh\:mm")" />
                     </div>
 
                     <div class="mb-3">
@@ -177,8 +197,8 @@
                             Место проведения банкета:
                         </label>
                         <textarea class="form-control auto-grow"
-                                  name="paragraph3"
-                                  rows="3">@Model.Paragraph3</textarea>
+                                  name="placeBanquet"
+                                  rows="3">@Model.PlaceBanquet</textarea>
                     </div>
 
                     <div class="mb-3">
@@ -186,8 +206,8 @@
                             Адрес проведения банкета:
                         </label>
                         <textarea class="form-control auto-grow"
-                                  name="paragraph4"
-                                  rows="3">@Model.Paragraph4</textarea>
+                                  name="addressBanquet"
+                                  rows="3">@Model.AddressBanquet</textarea>
                     </div>
 
                     <button type="submit"
