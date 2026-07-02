@@ -51,11 +51,41 @@ namespace Wedding.Controllers
                 .OrderBy(x => x.GuestName)
                 .ToList();
 
+            //model.Questions = questions
+            //    .Select(q => new QuestionSummaryVm
+            //    {
+            //        QuestionId = q.Id,
+
+            //        Question = q.Text,
+
+            //        Options = q.Options
+            //            .Select(o => new OptionCountVm
+            //            {
+            //                Option = o.Text,
+
+            //                Count = guests
+            //                    .SelectMany(g => g.SurveyAnswers)
+            //                    .Count(a => a.SelectedOptionId == o.Id)
+            //            })
+            //            .Where(x => x.Count > 0)
+            //            .OrderByDescending(x => x.Count)
+            //            .ToList(),
+
+            //        CustomAnswers = guests
+            //            .SelectMany(g => g.SurveyAnswers)
+            //            .Where(a =>
+            //                a.QuestionId == q.Id &&
+            //                !string.IsNullOrWhiteSpace(a.CustomAnswer))
+            //            .Select(a => a.CustomAnswer!)
+            //            .Distinct()
+            //            .ToList()
+            //    })
+            //    .ToList();
+            // 2. Формирование сводки по вопросам (С учетом свободных ответов пар)
             model.Questions = questions
                 .Select(q => new QuestionSummaryVm
                 {
                     QuestionId = q.Id,
-
                     Question = q.Text,
 
                     Options = q.Options
@@ -64,8 +94,24 @@ namespace Wedding.Controllers
                             Option = o.Text,
 
                             Count = guests
-                                .SelectMany(g => g.SurveyAnswers)
-                                .Count(a => a.SelectedOptionId == o.Id)
+                                .Where(g => g.SurveyAnswers.Any(a => a.SelectedOptionId == o.Id))
+                                .Sum(g =>
+                                {
+                                    bool isPair = g.CoupleOrNot;
+
+                                    int selectedOptionsCount = g.SurveyAnswers
+                                        .Count(a => a.QuestionId == q.Id && a.SelectedOptionId != null);
+
+                                    bool hasCustomAnswer = g.SurveyAnswers
+                                        .Any(a => a.QuestionId == q.Id && !string.IsNullOrWhiteSpace(a.CustomAnswer));
+
+                                    if (isPair && selectedOptionsCount == 1 && !hasCustomAnswer)
+                                    {
+                                        return 2;
+                                    }
+
+                                    return 1;
+                                })
                         })
                         .Where(x => x.Count > 0)
                         .OrderByDescending(x => x.Count)
@@ -73,9 +119,7 @@ namespace Wedding.Controllers
 
                     CustomAnswers = guests
                         .SelectMany(g => g.SurveyAnswers)
-                        .Where(a =>
-                            a.QuestionId == q.Id &&
-                            !string.IsNullOrWhiteSpace(a.CustomAnswer))
+                        .Where(a => a.QuestionId == q.Id && !string.IsNullOrWhiteSpace(a.CustomAnswer))
                         .Select(a => a.CustomAnswer!)
                         .Distinct()
                         .ToList()

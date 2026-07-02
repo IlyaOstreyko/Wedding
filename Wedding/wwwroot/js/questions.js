@@ -53,7 +53,7 @@
             allowCustomAnswer: document.getElementById("modalAllowCustom").checked,
             outOfTowners: document.getElementById("modalOutOf").checked,
             forCouple: false,
-            options: getOptions()   // 🔥 FIX: STRING ARRAY
+            options: getOptions()   
         };
 
         const url = id ? endpoints.update : endpoints.add;
